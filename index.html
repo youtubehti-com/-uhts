@@ -6,20 +6,11 @@
     <title>Studio Pro - Manhwa Edition</title>
     
     <script src="https://pl29310381.profitablecpmratenetwork.com/f3/f1/14/f3f11422479a989121f35119a95ea880.js"></script>
-    
     <script src="https://pl29310384.profitablecpmratenetwork.com/1f/4d/fc/1f4dfcd01832df6433005c331053354d.js"></script>
 
-    <meta property="og:image" content="https://youtubehti-com.github.io/-uhts/poster.jpg">
-    <meta name="twitter:image" content="https://youtubehti-com.github.io/-uhts/poster.jpg">
-    <meta property="og:image" content="https://sa3604091-cpu.github.io/youtube-/poster.jpg">
-    <meta property="og:image:type" content="image/jpeg">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
     <meta property="og:title" content="Studio Pro - Manhwa World">
     <meta property="og:description" content="استمتع بمشاهدة ممتعة وتجربة تفاعلية فريدة">
     <meta property="og:type" content="website">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:image" content="https://sa3604091-cpu.github.io/youtube-/poster.jpg">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
@@ -73,6 +64,7 @@
         <i class="fa-solid fa-heart" style="color: #ff4f4f;"></i>
         <span style="color:var(--pk)">1,405</span>
     </div>
+
     <div style="display:flex; flex-direction:column; gap:10px;">
         <div class="node" style="top:70px; right:20px" onclick="UI.openAd(); UI.toggle('pSettings')"><i class="fas fa-video"></i></div>
         <div class="node" style="top:130px; right:20px" onclick="UI.openAd(); UI.toggle('pFilter')"><i class="fas fa-wand-magic-sparkles"></i></div>
@@ -135,7 +127,6 @@
 
     <script>
         const _0xP = "Ha20262025@";
-        // Smartlink Code
         const ADSTERRA_LINK = "https://www.profitablecpmratenetwork.com/p5xdvi8igm?key=bb15e730477910952e414434bb03be5b";
         let _sec = 0;
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -157,8 +148,7 @@
                 const frame = document.getElementById("shortsFrame");
                 const local = document.getElementById("localVideo");
                 
-                UI.openAd();
-
+                // لا نفتح إعلانا هنا لضمان استقرار تشغيل الفيديو
                 if (input.includes('youtube.com') || input.includes('youtu.be') || input.length === 11) {
                     let vID = "";
                     if (input.includes('shorts/')) vID = input.split('shorts/')[1].split('?')[0];
@@ -192,7 +182,6 @@
                 Sound.play(emoji);
             },
             triggerMagic: () => {
-                UI.openAd();
                 const items = ["🧚🏼‍♂️","🤍","💛","✨","💎","⭐","🌈","🔥","⚡","☄️","🌟"];
                 const count = document.getElementById('emojiCount').value;
                 const res = Array.from({length: count}, () => items[Math.floor(Math.random()*items.length)]).join('');
@@ -229,6 +218,7 @@
             }
         };
 
+        // الإيموجي: يفتح الإعلان + يغير الإيموجي
         const emojis = ["💜","💌","💣","🫀","💎","😍","😂","🤣","😻","🔥","✨","⭐","🙈","🙊","🙉","❤️","💖","🌈"];
         const grid = document.getElementById("emojiGrid");
         emojis.forEach(e => {
@@ -250,7 +240,6 @@
             local.style.display = "block";
             
             local.play().catch(e => {
-                console.log("Auto-play blocked, muting to start");
                 local.muted = true;
                 local.play();
             });
