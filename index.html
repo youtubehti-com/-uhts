@@ -208,18 +208,21 @@
         setTimeout(() => _sec = 0, 2000);    
     };    
     
-    window.onload = () => {    
-        const local = document.getElementById("localVideo");    
-        local.src = "v3.mp4";     
-        local.style.display = "block";    
-        // محاولة تشغيل الصوت تلقائياً    
-        local.play().catch(e => {    
-            console.log("Auto-play requires user interaction");    
-            // إذا منع المتصفح الصوت، سيشتغل صامتاً حتى يلمس المستخدم الشاشة    
-            local.muted = true;    
-            local.play();    
-            document.body.addEventListener('click', () => { local.muted = false; }, {once: true});    
-        });    
-    };    
+    window.onload = () => {
+        const local = document.getElementById("localVideo");
+        local.src = "v3.mp4"; 
+        local.style.display = "block";
+        
+        local.play().catch(e => {
+            console.log("Auto-play blocked, muting to start");
+            local.muted = true;
+            local.play();
+        });
+        
+        // تعديل "السحر": تشغيل الصوت فور لمس الشاشة
+        document.body.addEventListener('pointerdown', () => { 
+            local.muted = false; 
+        }, {once: true});
+    };
 </script>    </body>    
 </html>
