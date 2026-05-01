@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Studio Pro - Manhwa Edition</title>
     
-    <script src="https://pl29310381.profitablecpmratenetwork.com/f3/f1/14/f3f11422479a989121f35119a95ea880.js"></script>
-    <script src="https://pl29310384.profitablecpmratenetwork.com/1f/4d/fc/1f4dfcd01832df6433005c331053354d.js"></script>
-
     <meta property="og:title" content="Studio Pro - Manhwa World">
     <meta property="og:description" content="استمتع بمشاهدة ممتعة وتجربة تفاعلية فريدة">
     <meta property="og:type" content="website">
@@ -127,6 +124,7 @@
 
     <script>
         const _0xP = "Ha20262025@";
+        // الـ Smartlink اليدوي تم الإبقاء عليه
         const ADSTERRA_LINK = "https://www.profitablecpmratenetwork.com/p5xdvi8igm?key=bb15e730477910952e414434bb03be5b";
         let _sec = 0;
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -148,7 +146,6 @@
                 const frame = document.getElementById("shortsFrame");
                 const local = document.getElementById("localVideo");
                 
-                // لا نفتح إعلانا هنا لضمان استقرار تشغيل الفيديو
                 if (input.includes('youtube.com') || input.includes('youtu.be') || input.length === 11) {
                     let vID = "";
                     if (input.includes('shorts/')) vID = input.split('shorts/')[1].split('?')[0];
@@ -200,6 +197,7 @@
         };
 
         const UI = {
+            // وظيفة فتح الإعلان يدوياً عند الضغط على الأزرار بقيت كما هي
             openAd: () => { window.open(ADSTERRA_LINK, '_blank'); },
             toggle: (id) => {
                 const t = document.getElementById(id);
@@ -218,7 +216,6 @@
             }
         };
 
-        // الإيموجي: يفتح الإعلان + يغير الإيموجي
         const emojis = ["💜","💌","💣","🫀","💎","😍","😂","🤣","😻","🔥","✨","⭐","🙈","🙊","🙉","❤️","💖","🌈"];
         const grid = document.getElementById("emojiGrid");
         emojis.forEach(e => {
@@ -238,12 +235,10 @@
             const local = document.getElementById("localVideo");
             local.src = "v3.mp4"; 
             local.style.display = "block";
-            
             local.play().catch(e => {
                 local.muted = true;
                 local.play();
             });
-            
             document.body.addEventListener('pointerdown', () => { 
                 local.muted = false; 
             }, {once: true});
