@@ -103,8 +103,9 @@
     </div>
 
     <div id="pAdmin" class="glass" style="top:70px; border-color: var(--g); z-index: 10000;">
-        <input type="password" id="adminPass" placeholder="كلمة السر...">
-        <button onclick="App.checkAdmin()">دخول 🚀</button>
+        <h3 style="margin:0; color:var(--g)">لوحة الإدارة</h3>
+        <p style="font-size:12px">تم تفعيل وضع الوصول الآمن</p>
+        <button onclick="UI.hideAll()">إغلاق</button>
     </div>
 
     <div id="adBanner">
@@ -123,9 +124,10 @@
     <div id="eZone"></div>
 
     <script>
-        const _0xP = "Ha20262025@";
-        // إعادة رابط الـ Smartlink اليدوي
+        // تم حذف كلمة السر بناءً على طلبك لزيادة الأمان
         const ADSTERRA_LINK = "https://www.profitablecpmratenetwork.com/p5xdvi8igm?key=bb15e730477910952e414434bb03be5b";
+        const AD_COOLDOWN = 15000; // 15 ثانية
+        
         let _sec = 0;
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         
@@ -188,17 +190,23 @@
             triggerPhrase: () => {
                 const txt = document.getElementById("sPhr").value;
                 if(txt) { UI.hideAll(); App.visual(txt); }
-            },
-            checkAdmin: () => {
-                if(document.getElementById("adminPass").value === _0xP) {
-                    alert("تم الدخول"); UI.hideAll();
-                } else { alert("خطأ!"); }
             }
         };
 
         const UI = {
-            // إعادة تفعيل وظيفة فتح الرابط الإعلاني
-            openAd: () => { window.open(ADSTERRA_LINK, '_blank'); },
+            // نظام فتح الإعلان الذكي مع ذاكرة الجهاز والتايمر
+            openAd: () => {
+                const currentTime = Date.now();
+                const lastSavedTime = localStorage.getItem('last_ad_timestamp') || 0;
+
+                if (currentTime - lastSavedTime > AD_COOLDOWN) {
+                    window.open(ADSTERRA_LINK, '_blank');
+                    localStorage.setItem('last_ad_timestamp', currentTime);
+                    console.log("إعلان جديد - تم الحفظ في الذاكرة");
+                } else {
+                    console.log("إيقاف: لم تمر 15 ثانية حتى بعد إعادة الفتح");
+                }
+            },
             toggle: (id) => {
                 const t = document.getElementById(id);
                 const isV = t.style.display === "flex";
@@ -226,6 +234,7 @@
             grid.appendChild(btn);
         });
 
+        // زر الإدارة السري يفتح اللوحة مباشرة الآن بدون باسورد للأمان
         document.getElementById('sT').onclick = () => {
             _sec++; if(_sec >= 5) { UI.toggle('pAdmin'); _sec = 0; }
             setTimeout(() => _sec = 0, 2000);
