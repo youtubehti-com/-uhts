@@ -26,7 +26,7 @@
         #videoContainer {
             position: fixed; inset: 0; z-index: 1; background: #000;
             display: flex; justify-content: center; align-items: center;
-            bottom: 60px;
+            bottom: 60px; /* ترك مساحة للبانر السفلي */
         }
         #shortsFrame, #localVideo { width: 100%; height: 100%; border: none; display: none; object-fit: cover; }
         #wp-bg { position: fixed; inset: 0; z-index: 2; pointer-events: none; opacity: var(--wp); background-image: url('https://web.whatsapp.com/img/bg-chat-tile-dark_a4be512e719549d10e05527f6a012d27.png'); }
@@ -35,19 +35,29 @@
         .node { position: fixed; width: 50px; height: 50px; background: var(--pnl); border: 2px solid var(--p); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 1000; color: var(--p); transition: 0.3s; }
         .node:active { transform: scale(0.8); }
         .glass { position: fixed; background: var(--pnl); border: 1px solid var(--p); border-radius: 20px; padding: 15px; display: none; z-index: 9000; flex-direction: column; gap: 10px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); right: 80px; width: 220px; }
-        #pEmoji { position: fixed; top: 310px; right: 80px; width: 60px; background: var(--pnl); border: 1px solid var(--p); border-radius: 30px; padding: 15px 0; display: none; flex-direction: column; align-items: center; gap: 15px; z-index: 9001; max-height: 300px; overflow-y: auto; scrollbar-width: none; }
-        .emoji-btn { font-size: 28px; cursor: pointer; transition: 0.2s; }
-        .emoji-btn:hover { transform: scale(1.3); }
+        
+        #pEmoji { 
+            position: fixed; top: 100px; right: 85px; width: 50px; 
+            background: var(--pnl); border: 1px solid var(--p); border-radius: 30px; 
+            padding: 10px; display: none; flex-direction: column; align-items: center; 
+            gap: 15px; z-index: 9001; max-height: 400px; overflow-y: auto; scrollbar-width: none; 
+        }
+        .emoji-btn { font-size: 24px; cursor: pointer; transition: 0.2s; }
+        
         #eZone { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-weight: bold; z-index: 8000; pointer-events: none; opacity: 0; text-align: center; text-shadow: 0 0 20px rgba(0,0,0,0.5); width: 90%; }
         .pop { animation: cP 1.5s ease-out forwards; }
         @keyframes cP { 0% { transform: translate(-50%, -50%) scale(0); opacity: 0; } 20% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; } 100% { transform: translate(-50%, -50%) scale(1.4); opacity: 0; } }
+        
         input, button { padding: 10px; border-radius: 10px; border: 1px solid #444; background: rgba(255,255,255,0.05); color: var(--txt); outline: none; }
         button { cursor: pointer; font-weight: bold; background: #00a884; color: white; border: none; }
+        
+        /* ضبط مساحة الإعلان السفلي */
         #adBanner {
             position: fixed; bottom: 0; left: 0; width: 100%; height: 60px;
             background: #000; z-index: 10001; display: flex; justify-content: center; align-items: center;
+            border-top: 1px solid var(--p);
         }
-        .native-ad-container { margin-top: 10px; text-align: center; }
+        .native-ad-container { margin-top: 5px; text-align: center; border-top: 1px dashed var(--p); padding-top: 5px; }
     </style>
 </head>
 <body class="dark-theme">
@@ -57,6 +67,7 @@
         <video id="localVideo" controls autoplay loop playsinline poster="poster.jpg"></video>
     </div>
     <div id="wp-bg"></div>
+    
     <div id="subC">
         <i class="fa-solid fa-heart" style="color: #ff4f4f;"></i>
         <span style="color:var(--pk)">1,405</span>
@@ -71,9 +82,9 @@
     </div>
 
     <div id="pSettings" class="glass" style="top:70px">
-        <label>رابط يوتيوب أو اسم ملف الفيديو:</label>
-        <input type="text" id="ytUrl" placeholder="مثال: v.mp4 أو رابط يوتيوب">
-        <button onclick="App.applyMedia()">تشغيل الآن 🎬</button>
+        <label>رابط الفيديو:</label>
+        <input type="text" id="ytUrl" placeholder="v.mp4 أو رابط يوتيوب">
+        <button onclick="App.applyMedia()">تشغيل 🎬</button>
         <div class="native-ad-container">
             <script async="async" data-cfasync="false" src="https://pl29310385.profitablecpmratenetwork.com/00e55bc0936560b403e88e60248cee97/invoke.js"></script>
             <div id="container-00e55bc0936560b403e88e60248cee97"></div>
@@ -84,59 +95,58 @@
         <button onclick="UI.theme('dark')">🌙 ثيم ليلي</button>
         <button onclick="UI.theme('light')">☀️ ثيم نهاري</button>
         <button onclick="UI.filter('hue-rotate(280deg)')">🌸 ثيم وردي</button>
-        <button onclick="UI.filter('none')">❌ إلغاء الفلاتر</button>
+        <button onclick="UI.filter('none')">❌ إلغاء</button>
     </div>
 
     <div id="pMagic" class="glass" style="top:190px">
-        <label>عدد العناصر السحرية:</label>
+        <label>عدد العناصر:</label>
         <input type="number" id="emojiCount" value="5" max="15">
-        <button onclick="App.triggerMagic()">إطلاق السحر 🧚🏼‍♂️</button>
+        <button onclick="App.triggerMagic()">إطلاق 🧚🏼‍♂️</button>
     </div>
 
     <div id="pPhr" class="glass" style="top:250px">
-        <input type="text" id="sPhr" placeholder="اكتب رسالة للشاشة...">
-        <button onclick="App.triggerPhrase()">🔔 إرسال الآن</button>
+        <input type="text" id="sPhr" placeholder="رسالة للشاشة...">
+        <button onclick="App.triggerPhrase()">إرسال 🔔</button>
     </div>
 
-    <div id="pEmoji" class="glass">
+    <div id="pEmoji">
         <div id="emojiGrid"></div>
     </div>
 
     <div id="pAdmin" class="glass" style="top:70px; border-color: var(--g); z-index: 10000;">
         <h3 style="margin:0; color:var(--g)">لوحة الإدارة</h3>
-        <p style="font-size:12px">تم تفعيل وضع الوصول الآمن</p>
+        <p style="font-size:12px">وضع الوصول الآمن مفعّل</p>
         <button onclick="UI.hideAll()">إغلاق</button>
     </div>
 
     <div id="adBanner">
-        <script>
-          atOptions = {
-            'key' : 'ecd37eb3b51978e4cf1c88fb23e69e0b',
-            'format' : 'iframe',
-            'height' : 250,
-            'width' : 300,
-            'params' : {}
-          };
+        <script type="text/javascript">
+            atOptions = {
+                'key' : 'ecd37eb3b51978e4cf1c88fb23e69e0b',
+                'format' : 'iframe',
+                'height' : 50,
+                'width' : 320,
+                'params' : {}
+            };
         </script>
-        <script src="https://www.highperformanceformat.com/ecd37eb3b51978e4cf1c88fb23e69e0b/invoke.js"></script>
+        <script type="text/javascript" src="//www.highperformanceformat.com/ecd37eb3b51978e4cf1c88fb23e69e0b/invoke.js"></script>
     </div>
 
     <div id="eZone"></div>
 
     <script>
-        // تم حذف كلمة السر بناءً على طلبك لزيادة الأمان
         const ADSTERRA_LINK = "https://www.profitablecpmratenetwork.com/p5xdvi8igm?key=bb15e730477910952e414434bb03be5b";
-        const AD_COOLDOWN = 15000; // 15 ثانية
+        const AD_COOLDOWN = 15000; // 15 ثانية فاصل إجباري بين إعلانات Direct Link
         
         let _sec = 0;
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         
         const Sound = {
-            play: (emoji) => {
+            play: () => {
                 const now = audioCtx.currentTime;
                 const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
                 o.connect(g); g.connect(audioCtx.destination);
-                o.type = 'sine'; o.frequency.setValueAtTime(1000, now);
+                o.frequency.setValueAtTime(1000, now);
                 g.gain.setValueAtTime(0.1, now); g.gain.linearRampToValueAtTime(0, now + 0.1);
                 o.start(); o.stop(now + 0.1);
             }
@@ -147,45 +157,29 @@
                 const input = document.getElementById("ytUrl").value.trim();
                 const frame = document.getElementById("shortsFrame");
                 const local = document.getElementById("localVideo");
-                
                 if (input.includes('youtube.com') || input.includes('youtu.be') || input.length === 11) {
-                    let vID = "";
-                    if (input.includes('shorts/')) vID = input.split('shorts/')[1].split('?')[0];
-                    else if (input.includes('v=')) vID = input.split('v=')[1].split('&')[0];
-                    else if (input.includes('youtu.be/')) vID = input.split('youtu.be/')[1].split('?')[0];
-                    else vID = input;
-
-                    local.style.display = "none";
-                    local.pause();
+                    let vID = (input.includes('shorts/')) ? input.split('shorts/')[1].split('?')[0] : (input.includes('v=')) ? input.split('v=')[1].split('&')[0] : (input.includes('youtu.be/')) ? input.split('youtu.be/')[1].split('?')[0] : input;
+                    local.style.display = "none"; local.pause();
                     frame.style.display = "block";
                     frame.src = `https://www.youtube-nocookie.com/embed/${vID}?autoplay=1&loop=1&playlist=${vID}&rel=0&controls=1`;
-                } 
-                else if (input.length > 0) {
-                    frame.style.display = "none";
-                    frame.src = "";
-                    local.style.display = "block";
-                    local.src = input; 
-                    local.play();
+                } else if (input.length > 0) {
+                    frame.style.display = "none"; frame.src = "";
+                    local.style.display = "block"; local.src = input; local.play();
                 }
-
-                UI.hideAll();
-                App.visual("🎬");
+                UI.hideAll(); App.visual("🎬");
             },
             visual: (emoji) => {
                 const z = document.getElementById("eZone");
                 z.innerText = emoji; 
                 z.style.fontSize = emoji.length > 5 ? "40px" : "150px";
-                z.classList.remove("pop"); 
-                void z.offsetWidth; 
-                z.classList.add("pop");
-                Sound.play(emoji);
+                z.classList.remove("pop"); void z.offsetWidth; z.classList.add("pop");
+                Sound.play();
             },
             triggerMagic: () => {
                 const items = ["🧚🏼‍♂️","🤍","💛","✨","💎","⭐","🌈","🔥","⚡","☄️","🌟"];
                 const count = document.getElementById('emojiCount').value;
                 const res = Array.from({length: count}, () => items[Math.floor(Math.random()*items.length)]).join('');
-                UI.hideAll();
-                App.visual(res);
+                UI.hideAll(); App.visual(res);
             },
             triggerPhrase: () => {
                 const txt = document.getElementById("sPhr").value;
@@ -194,17 +188,13 @@
         };
 
         const UI = {
-            // نظام فتح الإعلان الذكي مع ذاكرة الجهاز والتايمر
             openAd: () => {
                 const currentTime = Date.now();
                 const lastSavedTime = localStorage.getItem('last_ad_timestamp') || 0;
-
+                // فحص التايمر قبل الفتح لضمان عدم الحظر
                 if (currentTime - lastSavedTime > AD_COOLDOWN) {
                     window.open(ADSTERRA_LINK, '_blank');
                     localStorage.setItem('last_ad_timestamp', currentTime);
-                    console.log("إعلان جديد - تم الحفظ في الذاكرة");
-                } else {
-                    console.log("إيقاف: لم تمر 15 ثانية حتى بعد إعادة الفتح");
                 }
             },
             toggle: (id) => {
@@ -213,28 +203,22 @@
                 UI.hideAll();
                 t.style.display = isV ? "none" : "flex";
             },
-            hideAll: () => { document.querySelectorAll('.glass').forEach(p => p.style.display = "none"); },
-            theme: (m) => { 
-                document.body.classList.toggle('light-theme', m === 'light');
-                UI.hideAll();
-            },
-            filter: (f) => {
-                document.getElementById('videoContainer').style.filter = f;
-                UI.hideAll();
-            }
+            hideAll: () => { document.querySelectorAll('.glass, #pEmoji').forEach(p => p.style.display = "none"); },
+            theme: (m) => { document.body.classList.toggle('light-theme', m === 'light'); UI.hideAll(); },
+            filter: (f) => { document.getElementById('videoContainer').style.filter = f; UI.hideAll(); }
         };
 
-        const emojis = ["💜","💌","💣","🫀","💎","😍","😂","🤣","😻","🔥","✨","⭐","🙈","🙊","🙉","❤️","💖","🌈"];
+        const emojis = ["💜","💌","💣","🫀","💎","😍","😂","🤣","😻","🔥","✨","⭐","🙈","❤️","💖","🌈"];
         const grid = document.getElementById("emojiGrid");
         emojis.forEach(e => {
             let btn = document.createElement("div");
             btn.className = "emoji-btn";
             btn.innerText = e;
-            btn.onclick = () => { UI.openAd(); UI.hideAll(); App.visual(e); };
+            // الضغط على أي إيموجي يحفز الإعلان مع احترام التايمر
+            btn.onclick = () => { UI.openAd(); App.visual(e); };
             grid.appendChild(btn);
         });
 
-        // زر الإدارة السري يفتح اللوحة مباشرة الآن بدون باسورد للأمان
         document.getElementById('sT').onclick = () => {
             _sec++; if(_sec >= 5) { UI.toggle('pAdmin'); _sec = 0; }
             setTimeout(() => _sec = 0, 2000);
@@ -242,15 +226,9 @@
 
         window.onload = () => {
             const local = document.getElementById("localVideo");
-            local.src = "v3.mp4"; 
-            local.style.display = "block";
-            local.play().catch(e => {
-                local.muted = true;
-                local.play();
-            });
-            document.body.addEventListener('pointerdown', () => { 
-                local.muted = false; 
-            }, {once: true});
+            local.src = "v3.mp4"; local.style.display = "block";
+            local.play().catch(() => { local.muted = true; local.play(); });
+            document.body.addEventListener('pointerdown', () => { local.muted = false; }, {once: true});
         };
     </script>
 </body>
