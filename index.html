@@ -4,75 +4,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Studio Pro - Media Player</title>
+    <title>Studio Pro - Player</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         :root { --bg: #0b141a; --text: #ffffff; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: var(--bg); color: var(--text); font-family: Segoe UI, sans-serif; overflow: hidden; }
-        #videoContainer { position: fixed; inset: 0; bottom: 60px; background: #000; }
-        #localVideo, #shortsFrame { width: 100%; height: 100%; object-fit: cover; border: none; }
+        
+        /* البانر العلوي */
+        #adBannerTop { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 60px; 
+            background: #000; z-index: 9999; display: flex; 
+            justify-content: center; align-items: center; border-bottom: 1px solid #333; 
+        }
+
+        #videoContainer { position: fixed; inset: 0; top: 60px; background: #000; }
+        #localVideo { width: 100%; height: 100%; object-fit: contain; border: none; }
         
         /* إعلان الفيديو الأولي */
         #videoAdBox { position: fixed; inset: 0; background: #000; z-index: 99999; display: none; justify-content: center; align-items: center; }
         #videoAdPlayer { width: 100%; height: 100%; object-fit: cover; }
         #adInfo { position: absolute; top: 20px; right: 20px; background: rgba(0,0,0,.7); color: #fff; padding: 10px 15px; border-radius: 10px; font-size: 14px; }
         #skipAdBtn { position: absolute; bottom: 90px; left: 20px; background: #fff; color: #000; border: none; padding: 10px 18px; border-radius: 6px; font-weight: bold; cursor: pointer; display: none; }
-        
-        /* البانر السفلي */
-        #adBanner { position: fixed; bottom: 0; left: 0; width: 100%; height: 60px; background: #000; z-index: 99999; display: flex; justify-content: center; align-items: center; border-top: 1px solid #333; }
     </style>
 </head>
 
 <body>
 
-<div id="videoContainer">
-    <iframe id="shortsFrame" allowfullscreen allow="autoplay" style="display:none;"></iframe>
-    <video id="localVideo" autoplay playsinline controls loop style="display:none;"></video>
-</div>
-
-<div id="videoAdBox">
-    <video id="videoAdPlayer" autoplay muted playsinline></video>
-    <div id="adInfo">إعلان ممول • <span id="skipTimer">5</span></div>
-    <button id="skipAdBtn">تخطي الإعلان</button>
-</div>
-
-<div id="adBanner">
+<div id="adBannerTop">
     <script type="text/javascript">
         atOptions = { 'key' : 'ecd37eb3b51978e4cf1c88fb23e69e0b', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {} };
     </script>
     <script src="//www.highperformanceformat.com/ecd37eb3b51978e4cf1c88fb23e69e0b/invoke.js"></script>
 </div>
 
+<div id="videoContainer">
+    <video id="localVideo" playsinline controls loop></video>
+</div>
+
+<div id="videoAdBox">
+    <video id="videoAdPlayer" autoplay muted playsinline></video>
+    <div id="adInfo">إعلان ممول • <span id="skipTimer">3</span></div>
+    <button id="skipAdBtn">تخطي الإعلان</button>
+</div>
+
 <script>
 /* =========================
-   إعدادات الحماية والأمان
+   إعدادات الفيديو والإعلانات
 ========================= */
 
-// 1. تفعيل البوب اندر بعد فترة من التصفح وليس فوراً
-let firstClickDone = false;
-document.addEventListener("click", () => {
-    if (firstClickDone) return;
-    firstClickDone = true;
-    
-    // تأخير ظهور النافذة المنبثقة 3 ثوانٍ بعد أول ضغطة ليبدو الأمر طبيعياً
-    setTimeout(() => {
-        let s = document.createElement("script");
-        s.src = "https://pl29310381.profitablecpmratenetwork.com/f3/f1/14/f3f11422479a989121f35119a95ea880.js";
-        document.body.appendChild(s);
-    }, 3000);
-});
+const mainVideo = document.getElementById("localVideo");
 
-// 2. تفعيل إعلانات المشاهدة (Social Bar) بعد 10 ثوانٍ من دخول الصفحة
-function startWatchAd() {
-    setTimeout(() => {
-        let s = document.createElement("script");
-        s.src = "https://pl29310384.profitablecpmratenetwork.com/1f/4d/fc/1f4dfcd01832df6433005c331053354d.js";
-        document.body.appendChild(s);
-    }, 10000); 
-}
+// اسم الملف فقط كما طلبت
+const videoFileName = "v3.mp4"; 
 
-// 3. تشغيل إعلان الفيديو الأولي مع حماية الوقت
 function runPreRollAd(callback) {
     const adBox = document.getElementById("videoAdBox");
     const adPlayer = document.getElementById("videoAdPlayer");
@@ -80,9 +65,11 @@ function runPreRollAd(callback) {
     const timer = document.getElementById("skipTimer");
 
     adBox.style.display = "flex";
-    adPlayer.src = "ads/ad1.mp4"; // تأكد من وجود ملف الفيديو
+    
+    // إعلان الفيديو الأولي (تأكد من وجود هذا الملف أيضاً في ملفاتك)
+    adPlayer.src = "ads/ad1.mp4"; 
 
-    let count = 5; // رفع الوقت لـ 5 ثوانٍ لتحسين جودة الزيارة
+    let count = 3; 
     const interval = setInterval(() => {
         count--;
         timer.innerText = count;
@@ -99,31 +86,37 @@ function runPreRollAd(callback) {
     };
 }
 
-// 4. تحميل المحتوى الأساسي
-function startExchangeContent() {
-    const targetUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
-    const shortsFrame = document.getElementById("shortsFrame");
-    const localVideo = document.getElementById("localVideo");
+function startVideoContent() {
+    mainVideo.src = videoFileName;
+    mainVideo.play();
 
-    if (targetUrl.includes("youtube.com") || targetUrl.includes("youtu.be")) {
-        let vID = targetUrl.includes("v=") ? targetUrl.split("v=")[1].split("&")[0] : targetUrl.split("youtu.be/")[1];
-        localVideo.style.display = "none";
-        shortsFrame.style.display = "block";
-        shortsFrame.src = `https://www.youtube-nocookie.com/embed/${vID}?autoplay=1`;
-    } else {
-        shortsFrame.style.display = "none";
-        localVideo.style.display = "block";
-        localVideo.src = targetUrl;
-        localVideo.play();
-    }
+    // تشغيل إعلان Popunder تلقائياً بعد 5 ثوانٍ من بدء عرض فيديو v3
+    // هذا الكود سيعمل بمجرد أن يبدأ الفيديو فعلياً (Play)
+    let popunderTriggered = false;
     
-    startWatchAd();
+    mainVideo.addEventListener('timeupdate', function() {
+        // إذا وصل الفيديو للثانية 5 ولم يتم تشغيل الإعلان بعد
+        if (mainVideo.currentTime >= 5 && !popunderTriggered) {
+            popunderTriggered = true; 
+            console.log("تفعيل الإعلان المنبثق الآن...");
+            let s = document.createElement("script");
+            s.src = "https://pl29310381.profitablecpmratenetwork.com/f3/f1/14/f3f11422479a989121f35119a95ea880.js";
+            document.body.appendChild(s);
+        }
+    });
+
+    // تفعيل إعلان Social Bar بعد 12 ثانية (قبل النهاية بـ 5 ثوانٍ)
+    setTimeout(() => {
+        let s = document.createElement("script");
+        s.src = "https://pl29310384.profitablecpmratenetwork.com/1f/4d/fc/1f4dfcd01832df6433005c331053354d.js";
+        document.body.appendChild(s);
+    }, 12000);
 }
 
 window.onload = () => {
-    // تشغيل الإعلانات بترتيب ذكي
+    // تشغيل إعلان الفيديو الأولي أولاً ثم محتوى v3
     runPreRollAd(() => {
-        startExchangeContent();
+        startVideoContent();
     });
 };
 </script>
