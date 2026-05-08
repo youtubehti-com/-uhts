@@ -1,235 +1,132 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Studio Pro - Manhwa Edition</title>
-    
-    <meta property="og:title" content="Studio Pro - Manhwa World">
-    <meta property="og:description" content="استمتع بمشاهدة ممتعة وتجربة تفاعلية فريدة">
-    <meta property="og:type" content="website">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studio Pro - Media Player</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        :root {
-            --p: #e2d1f9; --pk: #ffdae9; --g: #ffd700; --b: #00d2ff;
-            --bg: #0b141a; --pnl: rgba(23, 33, 39, 0.98); --txt: white; --wp: 0.1;
-        }
-        .light-theme {
-            --bg: #f0f2f5; --pnl: rgba(255, 255, 255, 0.95); --txt: #111b21; --p: #6a5acd; --wp: 0.4;
-        }
-        body {
-            margin: 0; background: var(--bg); color: var(--txt);
-            font-family: 'Segoe UI', sans-serif; height: 100vh;
-            overflow: hidden; transition: 0.5s; user-select: none;
-        }
-        #videoContainer {
-            position: fixed; inset: 0; z-index: 1; background: #000;
-            display: flex; justify-content: center; align-items: center;
-            bottom: 60px; /* ترك مساحة للبانر السفلي */
-        }
-        #shortsFrame, #localVideo { width: 100%; height: 100%; border: none; display: none; object-fit: cover; }
-        #wp-bg { position: fixed; inset: 0; z-index: 2; pointer-events: none; opacity: var(--wp); background-image: url('https://web.whatsapp.com/img/bg-chat-tile-dark_a4be512e719549d10e05527f6a012d27.png'); }
-        #sT { position: fixed; top: 0; left: 0; width: 60px; height: 60px; z-index: 9999; cursor: pointer; }
-        #subC { position: fixed; top: 15px; right: 15px; background: var(--pnl); border: 1px solid var(--pk); padding: 5px 15px; border-radius: 20px; display: flex; align-items: center; gap: 8px; z-index: 1000; }
-        .node { position: fixed; width: 50px; height: 50px; background: var(--pnl); border: 2px solid var(--p); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 1000; color: var(--p); transition: 0.3s; }
-        .node:active { transform: scale(0.8); }
-        .glass { position: fixed; background: var(--pnl); border: 1px solid var(--p); border-radius: 20px; padding: 15px; display: none; z-index: 9000; flex-direction: column; gap: 10px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); right: 80px; width: 220px; }
+        :root { --bg: #0b141a; --text: #ffffff; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: var(--bg); color: var(--text); font-family: Segoe UI, sans-serif; overflow: hidden; }
+        #videoContainer { position: fixed; inset: 0; bottom: 60px; background: #000; }
+        #localVideo, #shortsFrame { width: 100%; height: 100%; object-fit: cover; border: none; }
         
-        #pEmoji { 
-            position: fixed; top: 100px; right: 85px; width: 50px; 
-            background: var(--pnl); border: 1px solid var(--p); border-radius: 30px; 
-            padding: 10px; display: none; flex-direction: column; align-items: center; 
-            gap: 15px; z-index: 9001; max-height: 400px; overflow-y: auto; scrollbar-width: none; 
-        }
-        .emoji-btn { font-size: 24px; cursor: pointer; transition: 0.2s; }
+        /* إعلان الفيديو الأولي */
+        #videoAdBox { position: fixed; inset: 0; background: #000; z-index: 99999; display: none; justify-content: center; align-items: center; }
+        #videoAdPlayer { width: 100%; height: 100%; object-fit: cover; }
+        #adInfo { position: absolute; top: 20px; right: 20px; background: rgba(0,0,0,.7); color: #fff; padding: 10px 15px; border-radius: 10px; font-size: 14px; }
+        #skipAdBtn { position: absolute; bottom: 90px; left: 20px; background: #fff; color: #000; border: none; padding: 10px 18px; border-radius: 6px; font-weight: bold; cursor: pointer; display: none; }
         
-        #eZone { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-weight: bold; z-index: 8000; pointer-events: none; opacity: 0; text-align: center; text-shadow: 0 0 20px rgba(0,0,0,0.5); width: 90%; }
-        .pop { animation: cP 1.5s ease-out forwards; }
-        @keyframes cP { 0% { transform: translate(-50%, -50%) scale(0); opacity: 0; } 20% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; } 100% { transform: translate(-50%, -50%) scale(1.4); opacity: 0; } }
-        
-        input, button { padding: 10px; border-radius: 10px; border: 1px solid #444; background: rgba(255,255,255,0.05); color: var(--txt); outline: none; }
-        button { cursor: pointer; font-weight: bold; background: #00a884; color: white; border: none; }
-        
-        /* ضبط مساحة الإعلان السفلي */
-        #adBanner {
-            position: fixed; bottom: 0; left: 0; width: 100%; height: 60px;
-            background: #000; z-index: 10001; display: flex; justify-content: center; align-items: center;
-            border-top: 1px solid var(--p);
-        }
-        .native-ad-container { margin-top: 5px; text-align: center; border-top: 1px dashed var(--p); padding-top: 5px; }
+        /* البانر السفلي */
+        #adBanner { position: fixed; bottom: 0; left: 0; width: 100%; height: 60px; background: #000; z-index: 99999; display: flex; justify-content: center; align-items: center; border-top: 1px solid #333; }
     </style>
 </head>
-<body class="dark-theme">
-    <div id="sT"></div>
-    <div id="videoContainer">
-        <iframe id="shortsFrame" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-        <video id="localVideo" controls autoplay loop playsinline poster="poster.jpg"></video>
-    </div>
-    <div id="wp-bg"></div>
-    
-    <div id="subC">
-        <i class="fa-solid fa-heart" style="color: #ff4f4f;"></i>
-        <span style="color:var(--pk)">1,405</span>
-    </div>
 
-    <div style="display:flex; flex-direction:column; gap:10px;">
-        <div class="node" style="top:70px; right:20px" onclick="UI.openAd(); UI.toggle('pSettings')"><i class="fas fa-video"></i></div>
-        <div class="node" style="top:130px; right:20px" onclick="UI.openAd(); UI.toggle('pFilter')"><i class="fas fa-wand-magic-sparkles"></i></div>
-        <div class="node" style="top:190px; right:20px; color:var(--g); border-color:var(--g)" onclick="UI.openAd(); UI.toggle('pMagic')"><i class="fas fa-wand-sparkles"></i></div>
-        <div class="node" style="top:250px; right:20px; color:var(--b); border-color:var(--b)" onclick="UI.openAd(); UI.toggle('pPhr')"><i class="fas fa-comment-dots"></i></div>
-        <div class="node" style="top:310px; right:20px" onclick="UI.openAd(); UI.toggle('pEmoji')"><i class="fa-solid fa-face-smile"></i></div>
-    </div>
+<body>
 
-    <div id="pSettings" class="glass" style="top:70px">
-        <label>رابط الفيديو:</label>
-        <input type="text" id="ytUrl" placeholder="v.mp4 أو رابط يوتيوب">
-        <button onclick="App.applyMedia()">تشغيل 🎬</button>
-        <div class="native-ad-container">
-            <script async="async" data-cfasync="false" src="https://pl29310385.profitablecpmratenetwork.com/00e55bc0936560b403e88e60248cee97/invoke.js"></script>
-            <div id="container-00e55bc0936560b403e88e60248cee97"></div>
-        </div>
-    </div>
+<div id="videoContainer">
+    <iframe id="shortsFrame" allowfullscreen allow="autoplay" style="display:none;"></iframe>
+    <video id="localVideo" autoplay playsinline controls loop style="display:none;"></video>
+</div>
 
-    <div id="pFilter" class="glass" style="top:130px">
-        <button onclick="UI.theme('dark')">🌙 ثيم ليلي</button>
-        <button onclick="UI.theme('light')">☀️ ثيم نهاري</button>
-        <button onclick="UI.filter('hue-rotate(280deg)')">🌸 ثيم وردي</button>
-        <button onclick="UI.filter('none')">❌ إلغاء</button>
-    </div>
+<div id="videoAdBox">
+    <video id="videoAdPlayer" autoplay muted playsinline></video>
+    <div id="adInfo">إعلان ممول • <span id="skipTimer">5</span></div>
+    <button id="skipAdBtn">تخطي الإعلان</button>
+</div>
 
-    <div id="pMagic" class="glass" style="top:190px">
-        <label>عدد العناصر:</label>
-        <input type="number" id="emojiCount" value="5" max="15">
-        <button onclick="App.triggerMagic()">إطلاق 🧚🏼‍♂️</button>
-    </div>
-
-    <div id="pPhr" class="glass" style="top:250px">
-        <input type="text" id="sPhr" placeholder="رسالة للشاشة...">
-        <button onclick="App.triggerPhrase()">إرسال 🔔</button>
-    </div>
-
-    <div id="pEmoji">
-        <div id="emojiGrid"></div>
-    </div>
-
-    <div id="pAdmin" class="glass" style="top:70px; border-color: var(--g); z-index: 10000;">
-        <h3 style="margin:0; color:var(--g)">لوحة الإدارة</h3>
-        <p style="font-size:12px">وضع الوصول الآمن مفعّل</p>
-        <button onclick="UI.hideAll()">إغلاق</button>
-    </div>
-
-    <div id="adBanner">
-        <script type="text/javascript">
-            atOptions = {
-                'key' : 'ecd37eb3b51978e4cf1c88fb23e69e0b',
-                'format' : 'iframe',
-                'height' : 50,
-                'width' : 320,
-                'params' : {}
-            };
-        </script>
-        <script type="text/javascript" src="//www.highperformanceformat.com/ecd37eb3b51978e4cf1c88fb23e69e0b/invoke.js"></script>
-    </div>
-
-    <div id="eZone"></div>
-
-    <script>
-        const ADSTERRA_LINK = "https://www.profitablecpmratenetwork.com/p5xdvi8igm?key=bb15e730477910952e414434bb03be5b";
-        const AD_COOLDOWN = 15000; // 15 ثانية فاصل إجباري بين إعلانات Direct Link
-        
-        let _sec = 0;
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        
-        const Sound = {
-            play: () => {
-                const now = audioCtx.currentTime;
-                const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
-                o.connect(g); g.connect(audioCtx.destination);
-                o.frequency.setValueAtTime(1000, now);
-                g.gain.setValueAtTime(0.1, now); g.gain.linearRampToValueAtTime(0, now + 0.1);
-                o.start(); o.stop(now + 0.1);
-            }
-        };
-
-        const App = {
-            applyMedia: () => {
-                const input = document.getElementById("ytUrl").value.trim();
-                const frame = document.getElementById("shortsFrame");
-                const local = document.getElementById("localVideo");
-                if (input.includes('youtube.com') || input.includes('youtu.be') || input.length === 11) {
-                    let vID = (input.includes('shorts/')) ? input.split('shorts/')[1].split('?')[0] : (input.includes('v=')) ? input.split('v=')[1].split('&')[0] : (input.includes('youtu.be/')) ? input.split('youtu.be/')[1].split('?')[0] : input;
-                    local.style.display = "none"; local.pause();
-                    frame.style.display = "block";
-                    frame.src = `https://www.youtube-nocookie.com/embed/${vID}?autoplay=1&loop=1&playlist=${vID}&rel=0&controls=1`;
-                } else if (input.length > 0) {
-                    frame.style.display = "none"; frame.src = "";
-                    local.style.display = "block"; local.src = input; local.play();
-                }
-                UI.hideAll(); App.visual("🎬");
-            },
-            visual: (emoji) => {
-                const z = document.getElementById("eZone");
-                z.innerText = emoji; 
-                z.style.fontSize = emoji.length > 5 ? "40px" : "150px";
-                z.classList.remove("pop"); void z.offsetWidth; z.classList.add("pop");
-                Sound.play();
-            },
-            triggerMagic: () => {
-                const items = ["🧚🏼‍♂️","🤍","💛","✨","💎","⭐","🌈","🔥","⚡","☄️","🌟"];
-                const count = document.getElementById('emojiCount').value;
-                const res = Array.from({length: count}, () => items[Math.floor(Math.random()*items.length)]).join('');
-                UI.hideAll(); App.visual(res);
-            },
-            triggerPhrase: () => {
-                const txt = document.getElementById("sPhr").value;
-                if(txt) { UI.hideAll(); App.visual(txt); }
-            }
-        };
-
-        const UI = {
-            openAd: () => {
-                const currentTime = Date.now();
-                const lastSavedTime = localStorage.getItem('last_ad_timestamp') || 0;
-                // فحص التايمر قبل الفتح لضمان عدم الحظر
-                if (currentTime - lastSavedTime > AD_COOLDOWN) {
-                    window.open(ADSTERRA_LINK, '_blank');
-                    localStorage.setItem('last_ad_timestamp', currentTime);
-                }
-            },
-            toggle: (id) => {
-                const t = document.getElementById(id);
-                const isV = t.style.display === "flex";
-                UI.hideAll();
-                t.style.display = isV ? "none" : "flex";
-            },
-            hideAll: () => { document.querySelectorAll('.glass, #pEmoji').forEach(p => p.style.display = "none"); },
-            theme: (m) => { document.body.classList.toggle('light-theme', m === 'light'); UI.hideAll(); },
-            filter: (f) => { document.getElementById('videoContainer').style.filter = f; UI.hideAll(); }
-        };
-
-        const emojis = ["💜","💌","💣","🫀","💎","😍","😂","🤣","😻","🔥","✨","⭐","🙈","❤️","💖","🌈"];
-        const grid = document.getElementById("emojiGrid");
-        emojis.forEach(e => {
-            let btn = document.createElement("div");
-            btn.className = "emoji-btn";
-            btn.innerText = e;
-            // الضغط على أي إيموجي يحفز الإعلان مع احترام التايمر
-            btn.onclick = () => { UI.openAd(); App.visual(e); };
-            grid.appendChild(btn);
-        });
-
-        document.getElementById('sT').onclick = () => {
-            _sec++; if(_sec >= 5) { UI.toggle('pAdmin'); _sec = 0; }
-            setTimeout(() => _sec = 0, 2000);
-        };
-
-        window.onload = () => {
-            const local = document.getElementById("localVideo");
-            local.src = "v3.mp4"; local.style.display = "block";
-            local.play().catch(() => { local.muted = true; local.play(); });
-            document.body.addEventListener('pointerdown', () => { local.muted = false; }, {once: true});
-        };
+<div id="adBanner">
+    <script type="text/javascript">
+        atOptions = { 'key' : 'ecd37eb3b51978e4cf1c88fb23e69e0b', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {} };
     </script>
+    <script src="//www.highperformanceformat.com/ecd37eb3b51978e4cf1c88fb23e69e0b/invoke.js"></script>
+</div>
+
+<script>
+/* =========================
+   إعدادات الحماية والأمان
+========================= */
+
+// 1. تفعيل البوب اندر بعد فترة من التصفح وليس فوراً
+let firstClickDone = false;
+document.addEventListener("click", () => {
+    if (firstClickDone) return;
+    firstClickDone = true;
+    
+    // تأخير ظهور النافذة المنبثقة 3 ثوانٍ بعد أول ضغطة ليبدو الأمر طبيعياً
+    setTimeout(() => {
+        let s = document.createElement("script");
+        s.src = "https://pl29310381.profitablecpmratenetwork.com/f3/f1/14/f3f11422479a989121f35119a95ea880.js";
+        document.body.appendChild(s);
+    }, 3000);
+});
+
+// 2. تفعيل إعلانات المشاهدة (Social Bar) بعد 10 ثوانٍ من دخول الصفحة
+function startWatchAd() {
+    setTimeout(() => {
+        let s = document.createElement("script");
+        s.src = "https://pl29310384.profitablecpmratenetwork.com/1f/4d/fc/1f4dfcd01832df6433005c331053354d.js";
+        document.body.appendChild(s);
+    }, 10000); 
+}
+
+// 3. تشغيل إعلان الفيديو الأولي مع حماية الوقت
+function runPreRollAd(callback) {
+    const adBox = document.getElementById("videoAdBox");
+    const adPlayer = document.getElementById("videoAdPlayer");
+    const skipBtn = document.getElementById("skipAdBtn");
+    const timer = document.getElementById("skipTimer");
+
+    adBox.style.display = "flex";
+    adPlayer.src = "ads/ad1.mp4"; // تأكد من وجود ملف الفيديو
+
+    let count = 5; // رفع الوقت لـ 5 ثوانٍ لتحسين جودة الزيارة
+    const interval = setInterval(() => {
+        count--;
+        timer.innerText = count;
+        if (count <= 0) {
+            clearInterval(interval);
+            skipBtn.style.display = "block";
+        }
+    }, 1000);
+
+    skipBtn.onclick = () => {
+        adBox.style.display = "none";
+        adPlayer.pause();
+        if (callback) callback();
+    };
+}
+
+// 4. تحميل المحتوى الأساسي
+function startExchangeContent() {
+    const targetUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
+    const shortsFrame = document.getElementById("shortsFrame");
+    const localVideo = document.getElementById("localVideo");
+
+    if (targetUrl.includes("youtube.com") || targetUrl.includes("youtu.be")) {
+        let vID = targetUrl.includes("v=") ? targetUrl.split("v=")[1].split("&")[0] : targetUrl.split("youtu.be/")[1];
+        localVideo.style.display = "none";
+        shortsFrame.style.display = "block";
+        shortsFrame.src = `https://www.youtube-nocookie.com/embed/${vID}?autoplay=1`;
+    } else {
+        shortsFrame.style.display = "none";
+        localVideo.style.display = "block";
+        localVideo.src = targetUrl;
+        localVideo.play();
+    }
+    
+    startWatchAd();
+}
+
+window.onload = () => {
+    // تشغيل الإعلانات بترتيب ذكي
+    runPreRollAd(() => {
+        startExchangeContent();
+    });
+};
+</script>
+
 </body>
 </html>
