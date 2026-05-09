@@ -1,123 +1,249 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Studio Pro - Player</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <style>
-        :root { --bg: #0b141a; --text: #ffffff; }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: var(--bg); color: var(--text); font-family: Segoe UI, sans-serif; overflow: hidden; }
-        
-        /* البانر العلوي */
-        #adBannerTop { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 60px; 
-            background: #000; z-index: 9999; display: flex; 
-            justify-content: center; align-items: center; border-bottom: 1px solid #333; 
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Studio Pro - Clean Edition</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-        #videoContainer { position: fixed; inset: 0; top: 60px; background: #000; }
-        #localVideo { width: 100%; height: 100%; object-fit: contain; border: none; }
-        
-        /* إعلان الفيديو الأولي */
-        #videoAdBox { position: fixed; inset: 0; background: #000; z-index: 99999; display: none; justify-content: center; align-items: center; }
-        #videoAdPlayer { width: 100%; height: 100%; object-fit: cover; }
-        #adInfo { position: absolute; top: 20px; right: 20px; background: rgba(0,0,0,.7); color: #fff; padding: 10px 15px; border-radius: 10px; font-size: 14px; }
-        #skipAdBtn { position: absolute; bottom: 90px; left: 20px; background: #fff; color: #000; border: none; padding: 10px 18px; border-radius: 6px; font-weight: bold; cursor: pointer; display: none; }
-    </style>
+<style>
+:root{
+    --bg:#0b141a;
+    --panel:rgba(23,33,39,.95);
+    --primary:#e2d1f9;
+    --text:#fff;
+}
+
+body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:Segoe UI,sans-serif;
+    overflow:hidden;
+}
+
+#videoContainer{
+    position:fixed;
+    inset:0;
+    background:#000;
+    z-index: 1;
+}
+
+#localVideo, #shortsFrame{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    border:none;
+}
+
+/* بنر إعلاني علوي */
+#topBannerAd {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    z-index: 10000;
+    display: flex;
+    justify-content: center;
+    background: rgba(0,0,0,0.5);
+}
+
+/* إعلان وسط الفيديو */
+#midVideoAd {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10001;
+    display: none; /* يظهر برمجياً */
+    background: rgba(0,0,0,0.8);
+    padding: 10px;
+    border-radius: 10px;
+}
+
+/* إعلانات على هيئة إشعارات */
+.ad-notification {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    width: 280px;
+    background: var(--panel);
+    border: 1px solid var(--primary);
+    border-radius: 10px;
+    padding: 10px;
+    z-index: 10002;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    display: none;
+    animation: slideIn 0.5s ease-out;
+}
+
+@keyframes slideIn {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(0); }
+}
+
+.node{
+    position:fixed;
+    right:20px;
+    width:52px;
+    height:52px;
+    border-radius:50%;
+    background:var(--panel);
+    border:2px solid var(--primary);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    color:var(--primary);
+    z-index:9999;
+    cursor:pointer;
+}
+
+.glass{
+    position:fixed;
+    right:85px;
+    width:220px;
+    background:var(--panel);
+    border:1px solid var(--primary);
+    border-radius:20px;
+    padding:15px;
+    display:none;
+    flex-direction:column;
+    gap:10px;
+    z-index:99999;
+}
+
+#subC{
+    position:fixed;
+    top:70px; /* نزول قليلاً لترك مساحة للبنر */
+    right:15px;
+    background:rgba(0,0,0,0.5);
+    padding:8px 15px;
+    border-radius:20px;
+    z-index:9999;
+}
+</style>
 </head>
 
 <body>
 
-<div id="adBannerTop">
-    <script type="text/javascript">
-        atOptions = { 'key' : 'ecd37eb3b51978e4cf1c88fb23e69e0b', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {} };
-    </script>
-    <script src="//www.highperformanceformat.com/ecd37eb3b51978e4cf1c88fb23e69e0b/invoke.js"></script>
+<div id="topBannerAd">
+    <script async="async" data-cfasync="false" src="https://pl29310385.profitablecpmratenetwork.com/00e55bc0936560b403e88e60248cee97/invoke.js"></script>
+    <div id="container-00e55bc0936560b403e88e60248cee97"></div>
 </div>
 
 <div id="videoContainer">
-    <video id="localVideo" playsinline controls loop></video>
+    <iframe id="shortsFrame" style="display:none;" allowfullscreen allow="autoplay"></iframe>
+    <video id="localVideo" controls autoplay playsinline loop src="A.mp4"></video>
 </div>
 
-<div id="videoAdBox">
-    <video id="videoAdPlayer" autoplay muted playsinline></video>
-    <div id="adInfo">إعلان ممول • <span id="skipTimer">3</span></div>
-    <button id="skipAdBtn">تخطي الإعلان</button>
+<div id="midVideoAd">
+    <script>
+      atOptions = {
+        'key' : 'ecd37eb3b51978e4cf1c88fb23e69e0b',
+        'format' : 'iframe',
+        'height' : 250,
+        'width' : 300,
+        'params' : {}
+      };
+    </script>
+    <script src="https://www.highperformanceformat.com/ecd37eb3b51978e4cf1c88fb23e69e0b/invoke.js"></script>
+    <button onclick="document.getElementById('midVideoAd').style.display='none'" style="display:block; width:100%; margin-top:5px; background:#ff4f4f;">إغلاق ×</button>
 </div>
+
+<div id="notifAd" class="ad-notification">
+    <p style="font-size:12px; margin:0 0 10px 0;">إعلان ممول</p>
+    <script src="https://pl29310381.profitablecpmratenetwork.com/f3/f1/14/f3f11422479a989121f35119a95ea880.js"></script>
+</div>
+
+<div id="subC">
+    <i class="fa-solid fa-heart" style="color:#ff4f4f"></i>
+    <span>1,405</span>
+</div>
+
+<div class="node" style="top:120px" onclick="UI.toggle('pSettings')">
+    <i class="fas fa-video"></i>
+</div>
+
+<div id="pSettings" class="glass" style="top:120px">
+    <label>رابط الفيديو:</label>
+    <input type="text" id="ytUrl" placeholder="رابط يوتيوب أو mp4">
+    <button onclick="App.applyMedia()">تشغيل 🎬</button>
+</div>
+
+<script src="https://pl29310384.profitablecpmratenetwork.com/1f/4d/fc/1f4dfcd01832df6433005c331053354d.js"></script>
 
 <script>
-/* =========================
-   إعدادات الفيديو والإعلانات
-========================= */
+const localVideo = document.getElementById("localVideo");
+const shortsFrame = document.getElementById("shortsFrame");
 
-const mainVideo = document.getElementById("localVideo");
+const App = {
+    applyMedia: () => {
+        const input = document.getElementById("ytUrl").value.trim();
+        if (!input) return;
 
-// اسم الملف فقط كما طلبت
-const videoFileName = "v3.mp4"; 
-
-function runPreRollAd(callback) {
-    const adBox = document.getElementById("videoAdBox");
-    const adPlayer = document.getElementById("videoAdPlayer");
-    const skipBtn = document.getElementById("skipAdBtn");
-    const timer = document.getElementById("skipTimer");
-
-    adBox.style.display = "flex";
-    
-    // إعلان الفيديو الأولي (تأكد من وجود هذا الملف أيضاً في ملفاتك)
-    adPlayer.src = "ads/ad1.mp4"; 
-
-    let count = 3; 
-    const interval = setInterval(() => {
-        count--;
-        timer.innerText = count;
-        if (count <= 0) {
-            clearInterval(interval);
-            skipBtn.style.display = "block";
+        if (input.includes("youtube.com") || input.includes("youtu.be")) {
+            let vID;
+            if (input.includes("v=")) {
+                vID = input.split("v=")[1].split("&")[0];
+            } else if (input.includes("shorts/")) {
+                vID = input.split("shorts/")[1].split("?")[0];
+            } else {
+                vID = input.split("youtu.be/")[1].split("?")[0];
+            }
+            localVideo.style.display = "none";
+            localVideo.pause();
+            shortsFrame.style.display = "block";
+            shortsFrame.src = `https://www.youtube-nocookie.com/embed/${vID}?autoplay=1`;
+        } else {
+            shortsFrame.style.display = "none";
+            shortsFrame.src = "";
+            localVideo.style.display = "block";
+            localVideo.src = input;
+            localVideo.play();
         }
-    }, 1000);
+        UI.hideAll();
+    }
+};
 
-    skipBtn.onclick = () => {
-        adBox.style.display = "none";
-        adPlayer.pause();
-        if (callback) callback();
-    };
-}
+const UI = {
+    toggle: (id) => {
+        const el = document.getElementById(id);
+        const isVisible = el.style.display === "flex";
+        UI.hideAll();
+        el.style.display = isVisible ? "none" : "flex";
+    },
+    hideAll: () => {
+        document.querySelectorAll(".glass").forEach(el => {
+            el.style.display = "none";
+        });
+    }
+};
 
-function startVideoContent() {
-    mainVideo.src = videoFileName;
-    mainVideo.play();
+// التحكم في ظهور الإعلانات تلقائياً
+localVideo.ontimeupdate = () => {
+    let currentTime = localVideo.currentTime;
 
-    // تشغيل إعلان Popunder تلقائياً بعد 5 ثوانٍ من بدء عرض فيديو v3
-    // هذا الكود سيعمل بمجرد أن يبدأ الفيديو فعلياً (Play)
-    let popunderTriggered = false;
-    
-    mainVideo.addEventListener('timeupdate', function() {
-        // إذا وصل الفيديو للثانية 5 ولم يتم تشغيل الإعلان بعد
-        if (mainVideo.currentTime >= 5 && !popunderTriggered) {
-            popunderTriggered = true; 
-            console.log("تفعيل الإعلان المنبثق الآن...");
-            let s = document.createElement("script");
-            s.src = "https://pl29310381.profitablecpmratenetwork.com/f3/f1/14/f3f11422479a989121f35119a95ea880.js";
-            document.body.appendChild(s);
-        }
-    });
+    // إعلان وسط الفيديو يظهر عند الثانية 20 ويختفي عند 30
+    if (currentTime >= 20 && currentTime <= 30) {
+        document.getElementById('midVideoAd').style.display = 'block';
+    } else {
+        document.getElementById('midVideoAd').style.display = 'none';
+    }
 
-    // تفعيل إعلان Social Bar بعد 12 ثانية (قبل النهاية بـ 5 ثوانٍ)
-    setTimeout(() => {
-        let s = document.createElement("script");
-        s.src = "https://pl29310384.profitablecpmratenetwork.com/1f/4d/fc/1f4dfcd01832df6433005c331053354d.js";
-        document.body.appendChild(s);
-    }, 12000);
-}
+    // إعلان الإشعار يظهر عند الثانية 5
+    if (currentTime >= 5 && currentTime <= 15) {
+        document.getElementById('notifAd').style.display = 'block';
+    } else {
+        document.getElementById('notifAd').style.display = 'none';
+    }
+};
 
+// فتح رابط الإعلان (Direct Link) في خلفية الصفحة عند التحميل (اختياري حسب سياسة الشبكة)
 window.onload = () => {
-    // تشغيل إعلان الفيديو الأولي أولاً ثم محتوى v3
-    runPreRollAd(() => {
-        startVideoContent();
-    });
+    console.log("App Ready - Running Video A.mp4");
+    // رابط Direct Link المذكور في طلبك
+    // https://www.profitablecpmratenetwork.com/p5xdvi8igm?key=bb15e730477910952e414434bb03be5b
 };
 </script>
 
