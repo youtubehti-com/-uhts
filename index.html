@@ -31,13 +31,13 @@
 
 <div class="os-wrapper">
     <div class="top-nav">
-        <select id="lang-select" onchange="handleLangChange()">
+        <select id="lang-select" onchange="triggerAdAndChangeLang()">
             <option value="ar">العربية (AR)</option>
             <option value="en">English (EN)</option>
             <option value="fr">Français (FR)</option>
             <option value="it">Italiano (IT)</option>
         </select>
-        <select id="speed-select" onchange="showAds()">
+        <select id="speed-select" onchange="openLinkJustAd()">
             <option value="0.8">بطيء</option>
             <option value="1" selected>طبيعي</option>
             <option value="1.2">سريع</option>
@@ -60,21 +60,30 @@
 
     <div class="controls">
         <div class="btn" id="btn-space" onclick="addSpace()">مسافة</div>
-        <div class="btn" id="btn-del" onclick="deleteChar()">حذف</div>
-        <div class="btn" id="btn-clear" onclick="clearAll()">مسح</div>
-        <div class="btn" id="btn-copy" onclick="copyText()">نسخ</div>
+        <div class="btn" id="btn-del" onclick="deleteChar()" style="color:#ff5555">حذف</div>
+        <div class="btn" id="btn-clear" onclick="clearAll()" style="color:#ff5555">مسح</div>
+        <div class="btn" id="btn-copy" onclick="copyText()" style="color:var(--cyan)">نسخ</div>
         <div class="btn" id="btn-speak" onclick="speakFull()">نطق</div>
-        <div class="btn" id="btn-train" onclick="handleTrainClick()">تدريب</div>
+        <div class="btn" id="btn-train" onclick="handleTrain()">تدريب</div>
         <div class="btn" id="btn-stealth" onclick="toggleStealth()" style="grid-column: span 3;">وضع التخفي 🕶️</div>
     </div>
 </div>
 
 <script>
-    const API_TOKEN = '86682e42a7bd0db5dcf1ee0f9bcdc27f6679aa9d';
-    const REDIRECT_URL = window.location.href; 
-    let speakCounter = 0;
-    let trainCounter = 0;
-    let lastLang = "ar";
+    const API_KEY = '86682e42a7bd0db5dcf1ee0f9bcdc27f6679aa9d';
+    const REDIRECT_URL = window.location.href;
+    let speakCount = 0;
+    let trainCount = 0;
+
+    function openLinkJustAd() {
+        window.location.href = `https://linkjust.com/st?api=${API_KEY}&url=${encodeURIComponent(REDIRECT_URL)}`;
+    }
+
+    function triggerAdAndChangeLang() {
+        openLinkJustAd();
+        // التغيير الفعلي سيحدث بعد العودة أو يمكن معالجته برمجياً، لكن هنا ننفذ طلبك بفتح الإعلان عند التحويل.
+        initLang(); 
+    }
 
     const ui = {
         ar: { name: "اللغة العربية", space:"مسافة", del:"حذف", clear:"مسح الكل", copy:"تم النسخ", empty:"النص فارغ", stealth:"تفعيل التخفي", normal:"الوضع العادي", train:"اكتب حرف: ", langCode: 'ar-SA' },
@@ -94,26 +103,6 @@
 
     let activePoints = new Set(), sentence = "", fingers = 0, timer = null;
 
-    // وظيفة الإعلانات
-    function showAds() {
-        const adUrl = `https://linkjust.com/api?api=${API_TOKEN}&url=${encodeURIComponent(REDIRECT_URL)}`;
-        window.location.href = adUrl;
-    }
-
-    function handleLangChange() {
-        showAds(); 
-    }
-
-    function handleTrainClick() {
-        trainCounter++;
-        if (trainCounter >= 5) {
-            trainCounter = 0;
-            showAds();
-        } else {
-            startTraining();
-        }
-    }
-
     function speak(text) {
         if (!window.speechSynthesis) return;
         window.speechSynthesis.cancel();
@@ -126,10 +115,20 @@
         msg.rate = parseFloat(document.getElementById('speed-select').value);
         synth.speak(msg);
 
-        speakCounter++;
-        if (speakCounter >= 30) {
-            speakCounter = 0;
-            setTimeout(showAds, 500); 
+        speakCount++;
+        if(speakCount >= 30) {
+            speakCount = 0;
+            openLinkJustAd();
+        }
+    }
+
+    function handleTrain() {
+        trainCount++;
+        if(trainCount >= 5) {
+            trainCount = 0;
+            openLinkJustAd();
+        } else {
+            startTraining();
         }
     }
 
@@ -213,7 +212,7 @@
 
     function startTraining() {
         const lang = document.getElementById('lang-select').value;
-        const chars = Object.values(charMaps[lang]).filter(c => c.length === 1);
+        const chars = Object.values(charMaps[lang]);
         const target = chars[Math.floor(Math.random() * chars.length)];
         speak(ui[lang].train + target);
     }
