@@ -31,13 +31,13 @@
 
 <div class="os-wrapper">
     <div class="top-nav">
-        <select id="lang-select" onchange="triggerAdAndChangeLang()">
+        <select id="lang-select" onchange="triggerAdAndLang()">
             <option value="ar">العربية (AR)</option>
             <option value="en">English (EN)</option>
             <option value="fr">Français (FR)</option>
             <option value="it">Italiano (IT)</option>
         </select>
-        <select id="speed-select" onchange="openLinkJustAd()">
+        <select id="speed-select" onchange="openAdLink()">
             <option value="0.8">بطيء</option>
             <option value="1" selected>طبيعي</option>
             <option value="1.2">سريع</option>
@@ -63,26 +63,25 @@
         <div class="btn" id="btn-del" onclick="deleteChar()" style="color:#ff5555">حذف</div>
         <div class="btn" id="btn-clear" onclick="clearAll()" style="color:#ff5555">مسح</div>
         <div class="btn" id="btn-copy" onclick="copyText()" style="color:var(--cyan)">نسخ</div>
-        <div class="btn" id="btn-speak" onclick="speakFull()">نطق</div>
-        <div class="btn" id="btn-train" onclick="handleTrain()">تدريب</div>
+        <div class="btn" id="btn-speak" onclick="speakFull()" style="color:var(--cyan)">نطق</div>
+        <div class="btn" id="btn-train" onclick="handleTrainClick()" style="color:#fbff00">تدريب</div>
         <div class="btn" id="btn-stealth" onclick="toggleStealth()" style="grid-column: span 3;">وضع التخفي 🕶️</div>
     </div>
 </div>
 
 <script>
-    const API_KEY = '86682e42a7bd0db5dcf1ee0f9bcdc27f6679aa9d';
-    const REDIRECT_URL = window.location.href;
-    let speakCount = 0;
-    let trainCount = 0;
+    // رابط الإعلانات الخاص بكِ
+    const AD_LINK = "https://linkjust.com/Applicationsandlanguages";
+    let speakCounter = 0;
+    let trainCounter = 0;
 
-    function openLinkJustAd() {
-        window.location.href = `https://linkjust.com/st?api=${API_KEY}&url=${encodeURIComponent(REDIRECT_URL)}`;
+    function openAdLink() {
+        window.location.href = AD_LINK;
     }
 
-    function triggerAdAndChangeLang() {
-        openLinkJustAd();
-        // التغيير الفعلي سيحدث بعد العودة أو يمكن معالجته برمجياً، لكن هنا ننفذ طلبك بفتح الإعلان عند التحويل.
-        initLang(); 
+    function triggerAdAndLang() {
+        initLang(); // تغيير الواجهة
+        openAdLink(); // فتح الإعلان
     }
 
     const ui = {
@@ -115,18 +114,19 @@
         msg.rate = parseFloat(document.getElementById('speed-select').value);
         synth.speak(msg);
 
-        speakCount++;
-        if(speakCount >= 30) {
-            speakCount = 0;
-            openLinkJustAd();
+        // عداد النطق لفتح الإعلان بعد 30 مرة
+        speakCounter++;
+        if (speakCounter >= 30) {
+            speakCounter = 0;
+            openAdLink();
         }
     }
 
-    function handleTrain() {
-        trainCount++;
-        if(trainCount >= 5) {
-            trainCount = 0;
-            openLinkJustAd();
+    function handleTrainClick() {
+        trainCounter++;
+        if (trainCounter >= 5) {
+            trainCounter = 0;
+            openAdLink();
         } else {
             startTraining();
         }
