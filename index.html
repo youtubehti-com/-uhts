@@ -72,96 +72,106 @@
 <script>
     /**
      * @license BASEERA PRO - ENCRYPTED CORE
-     * Author: Hagar (Cybersecurity Specialist)
+     * Security Update: Persistent Ad-Timer (Local Recovery Mode)
      */
-    const _0xStrings = [
-        "\x68\x74\x74\x70\x73\x3a\x2f\x2f\x6c\x69\x6e\x6b\x6a\x75\x73\x74\x2e\x63\x6f\x6d\x2f\x41\x70\x70\x6c\x69\x63\x61\x74\x69\x6f\x6e\x73\x61\x6e\x64\x6c\x61\x6e\x67\x75\x61\x67\x65\x73", // AD_URL
-        "\x61\x72\x2d\x53\x41", "\x65\x6e\x2d\x55\x53", "\x66\x72\x2d\x46\x52", "\x69\x74\x2d\x49\x54", // Lang Codes
-        "\x69\x73\x4c\x6f\x63\x6b\x65\x64", "\x6c\x61\x73\x74\x4c\x61\x6e\x67", "\x73\x70\x65\x61\x6b\x43\x6f\x75\x6e\x74", "\x74\x72\x61\x69\x6e\x43\x6f\x75\x6e\x74" // Keys
+    const _0xHexStrings = [
+        "\x68\x74\x74\x70\x73\x3a\x2f\x2f\x6c\x69\x6e\x6b\x6a\x75\x73\x74\x2e\x63\x6f\x6d\x2f\x41\x70\x70\x6c\x69\x63\x61\x74\x69\x6f\x6e\x73\x61\x6e\x64\x6c\x61\x6e\x67\x75\x61\x67\x65\x73", 
+        "\x61\x64\x53\x74\x61\x72\x74\x54\x69\x6d\x65", "\x69\x73\x4c\x6f\x63\x6b\x65\x64", "\x73\x70\x65\x61\x6b\x43\x6f\x75\x6e\x74", "\x74\x72\x61\x69\x6e\x43\x6f\x75\x6e\x74"
     ];
 
-    const AD_URL = _0xStrings[0];
-    const _0xUiData = {
-        ar: { name: "\u0627\u0644\u0644\u063a\u0629 \u0627\u0644\u0639\u0631\u0628\u064a\u0629", space:"\u0645\u0633\u0627\u0641\u0629", del:"\u062d\u0630\u0641", clear:"\u0645\u0633\u062d \u0627\u0644\u0643\u0644", copy:"\u062a\u0645 \u0627\u0644\u0646\u0633\u062e", empty:"\u0627\u0644\u0646\u0635 \u0641\u0627\u0631\u063a", stealth:"\u062a\u0641\u0639\u064a\u0644 \u0627\u0644\u062a\u062e\u0641\u064a", normal:"\u0627\u0644\u0648\u0636\u0639 \u0627\u0644\u0639\u0627\u062f\u064a", train:"\u0627\u0643\u062a\u0628 \u062d\u0631\u0641: ", langCode: _0xStrings[1], adWarn: "\u064a\u062c\u0628 \u0645\u0634\u0627\u0647\u062f\u0629 \u0627\u0644\u0625\u0639\u0644\u0627\u0646 \u0644\u0641\u062a\u062d \u0627\u0644\u0645\u064a\u0632\u0627\u062a" },
-        en: { name: "English Language", space:"Space", del:"Delete", clear:"Cleared", copy:"Copied", empty:"Empty", stealth:"Stealth On", normal:"Stealth Off", train:"Type letter: ", langCode: _0xStrings[2], adWarn: "You must watch the ad to unlock features" },
-        fr: { name: "Langue Française", space:"Espace", del:"Effacer", clear:"Vidé", copy:"Copié", empty:"Vide", stealth:"Furtif", normal:"Normal", train:"Tapez: ", langCode: _0xStrings[3], adWarn: "Vous devez regarder la publicité" },
-        it: { name: "Lingua Italiana", space:"Spazio", del:"Elimina", clear:"Pulito", copy:"Copiato", empty:"Vuoto", stealth:"Invisibile", normal:"Normale", train:"Scrivi: ", langCode: _0xStrings[4], adWarn: "Devi guardare l'annuncio" }
+    const AD_URL = _0xHexStrings[0];
+    const _0xStorageKeys = { start: _0xHexStrings[1], lock: _0xHexStrings[2], spk: _0xHexStrings[3], trn: _0xHexStrings[4] };
+
+    const ui = {
+        ar: { name: "اللغة العربية", space:"مسافة", del:"حذف", clear:"مسح الكل", copy:"تم النسخ", empty:"النص فارغ", stealth:"تفعيل التخفي", normal:"الوضع العادي", train:"اكتب حرف: ", langCode: 'ar-SA', adWarn: "يجب مشاهدة الإعلان لفتح الميزات" },
+        en: { name: "English Language", space:"Space", del:"Delete", clear:"Cleared", copy:"Copied", empty:"Empty", stealth:"Stealth On", normal:"Stealth Off", train:"Type letter: ", langCode: 'en-US', adWarn: "You must watch the ad to unlock features" },
+        fr: { name: "Langue Française", space:"Espace", del:"Effacer", clear:"Vidé", copy:"Copié", empty:"Vide", stealth:"Furtif", normal:"Normal", train:"Tapez: ", langCode: 'fr-FR', adWarn: "Vous devez regarder la publicité" },
+        it: { name: "Lingua Italiana", space:"Spazio", del:"Elimina", clear:"Pulito", copy:"Copiato", empty:"Vuoto", stealth:"Invisibile", normal:"Normale", train:"Scrivi: ", langCode: 'it-IT', adWarn: "Devi guardare l'annuncio" }
     };
 
-    const _0xMaps = {
+    const charMaps = {
         ar: { "1":"ا", "1,2":"ب", "2,3,4,5":"ت", "1,4,5,6":"ث", "2,4,5":"ج", "1,5,6":"ح", "1,3,4,6":"خ", "1,4,5":"د", "2,3,4,6":"ذ", "1,2,3,5":"ر", "1,3,5,6":"ز", "2,3,4":"س", "1,4,6":"ش", "1,2,3,4,6":"ص", "1,2,4,5,6":"ض", "2,3,4,5,6":"ط", "3,4,6":"ظ", "1,2,3,5,6":"ع", "1,2,6":"غ", "1,2,4":"ف", "1,2,3,4,5":"ق", "1,3":"ك", "1,2,3":"ل", "1,3,4":"م", "1,3,4,5":"ن", "1,2,5":"هـ", "2,4,5,6":"و", "2,4":"ي", "3":"ء", "1,6":"ة", "1,3,5":"ى", "3,4,5":"آ", "4,6":"إ", "1,3,4,5,6":"ئ", "1,2,5,6":"ؤ", "2,3,5":"لا", "2,5,6":".", "2":"،", "2,3":"؛", "2,5":":", "2,3,6":"؟", "2,3,5":"!", "2,3,5,6":"\"", "3,6":"-", "3":"'", "3,4,5,6":"#", "6":"Capital" },
         en: { "1":"A","1,2":"B","1,4":"C","1,4,5":"D","1,5":"E","1,2,4":"F","1,2,4,5":"G","1,2,5":"H","2,4":"I","2,4,5":"J","1,3":"K","1,2,3":"L","1,3,4":"M","1,3,4,5":"N","1,3,5":"O","1,2,3,4":"P","1,2,3,4,5":"Q","1,2,3,5":"R","2,3,4":"S","2,3,4,5":"T","1,3,6":"U","1,2,3,6":"V","2,4,5,6":"W","1,3,4,6":"X","1,3,4,5,6":"Y","1,3,5,6":"Z", "2,5,6":".", "2":",", "2,3":";", "2,5":":", "2,3,6":"?", "2,3,5":"!", "2,3,5,6":"\"", "3,6":"-", "3":"'", "3,4,5,6":"#", "6":"Capital" },
         it: { "1":"A","1,2":"B","1,4":"C","1,4,5":"D","1,5":"E","1,2,4":"F","1,2,4,5":"G","1,2,5":"H","2,4":"I","1,2,3":"L","1,3,4":"M","1,3,4,5":"N","1,3,5":"O","1,2,3,4":"P","1,2,3,4,5":"Q","1,2,3,5":"R","2,3,4":"S","2,3,4,5":"T","1,3,6":"U","1,2,3,6":"V","1,3,5,6":"Z", "1,2,3,5,6":"À","2,3,4,6":"È","1,2,3,4,5,6":"É","2,4,6":"Ì","1,3,4,6":"Ò","2,3,4,5,6":"Ù", "2,5,6":".", "2":",", "2,3":";", "2,5":":", "2,3,6":"?", "2,3,5":"!", "2,3,5,6":"\"", "3,6":"-", "3":"'", "3,4,5,6":"#", "6":"Capital" },
         fr: { "1":"A","1,2":"B","1,4":"C","1,4,5":"D","1,5":"E","1,2,4":"F","1,2,4,5":"G","1,2,5":"H","2,4":"I","2,4,5":"J","1,3":"K","1,2,3":"L","1,3,4":"M","1,3,4,5":"N","1,3,5":"O","1,2,3,4":"P","1,2,3,4,5":"Q","1,2,3,5":"R","2,3,4":"S","2,3,4,5":"T","1,3,6":"U","1,2,3,6":"V","2,4,5,6":"W","1,3,4,6":"X","1,3,4,5,6":"Y","1,3,5,6":"Z", "1,2,3,5,6":"À","1,6":"Â","1,2,3,4,6":"Ç","1,2,3,4,5,6":"É","2,3,4,6":"È","1,2,6":"Ê","1,2,4,6":"Ë","1,4,6":"Î","1,2,3,5,6":"Ï","1,4,5,6":"Ô","2,3,5":"Œ","2,3,4,5,6":"Ù","1,2,4,6":"Û","1,2,5,6":"Ü","3,4,5":"Æ", "2,5,6":".", "2":",", "2,3":";", "2,5":":", "2,3,6":"?", "2,3,5":"!", "2,3,5,6":"\"", "3,6":"-", "3":"'", "3,4,5,6":"#", "6":"Capital" }
     };
 
-    const _0xSymbols = { "1":"\u2801","1,2":"\u2803","1,2,3":"\u2807","1,2,3,4":"\u280f","1,2,3,4,5":"\u281f","1,2,3,5":"\u2817","1,2,4":"\u280b","1,2,4,5":"\u281b","1,2,5":"\u2813","1,2,5,6":"\u2833","1,2,6":"\u2823","1,3":"\u2805","1,3,4":"\u280d","1,3,4,5":"\u281d","1,3,4,5,6":"\u283d","1,3,4,6":"\u282d","1,3,5":"\u2815","1,3,5,6":"\u2835","1,3,6":"\u2825","1,4":"\u2809","1,4,5":"\u2819","1,4,5,6":"\u2839","1,4,6":"\u2829","1,5":"\u2811","1,5,6":"\u2831","1,6":"\u2821","2":"\u2802","2,3":"\u2806","2,3,4":"\u280e","2,3,4,5":"\u281e","2,3,4,5,6":"\u283e","2,3,4,6":"\u282e","2,3,5":"\u280a","2,3,5,6":"\u2832","2,3,6":"\u2826","2,4":"\u280a","2,4,5":"\u281a","2,4,5,6":"\u283a","2,4,6":"\u280c","2,5":"\u2812","2,5,6":"\u2816","3":"\u2804","3,4,5":"\u281c","3,4,5,6":"\u283c","3,4,6":"\u2834","3,6":"\u2824","4,6":"\u2828","6":"\u2820" };
+    const brailleSymbols = { "1":"⠁","1,2":"⠃","1,2,3":"⠇","1,2,3,4":"⠏","1,2,3,4,5":"⠟","1,2,3,5":"⠗","1,2,4":"⠋","1,2,4,5":"⠛","1,2,5":"⠓","1,2,5,6":"⠳","1,2,6":"⠣","1,3":"⠅","1,3,4":"⠍","1,3,4,5":"⠝","1,3,4,5,6":"⠽","1,3,4,6":"⠭","1,3,5":"⠕","1,3,5,6":"⠵","1,3,6":"⠥","1,4":"⠉","1,4,5":"⠙","1,4,5,6":"⠹","1,4,6":"⠩","1,5":"⠑","1,5,6":"⠱","1,6":"⠡","2":"⠂","2,3":"⠆","2,3,4":"⠎","2,3,4,5":"⠞","2,3,4,5,6":"⠾","2,3,4,6":"⠮","2,3,5":"⠪","2,3,5,6":"⠲","2,3,6":"⠦","2,4":"⠊","2,4,5":"⠚","2,4,5,6":"⠺","2,4,6":"⠌","2,5":"⠒","2,5,6":"⠖","3":"⠄","3,4,5":"⠜","3,4,5,6":"⠼","3,4,6":"⠴","3,6":"⠤","4,6":"⠨","6":"⠠" };
 
     let activePoints = new Set(), sentence = "", fingers = 0, timer = null;
-    let speakCount = parseInt(localStorage.getItem(_0xStrings[7])) || 0;
-    let trainCount = parseInt(localStorage.getItem(_0xStrings[8])) || 0;
-    let isLocked = localStorage.getItem(_0xStrings[5]) === 'true';
-    let adStartTime = 0, pendingLang = null;
+    let isLocked = localStorage.getItem(_0xStorageKeys.lock) === 'true';
+    let pendingLang = null;
 
-    function speak(t) {
-        if (isLocked) return triggerAdVoice();
+    function speak(text) {
+        if (isLocked) { triggerAdVoice(); return; }
         if (!window.speechSynthesis) return;
         window.speechSynthesis.cancel();
-        const l = document.getElementById('lang-select').value;
-        const m = new SpeechSynthesisUtterance(t);
-        m.lang = _0xUiData[l].langCode;
-        m.rate = parseFloat(document.getElementById('speed-select').value);
-        window.speechSynthesis.speak(m);
+        const lang = document.getElementById('lang-select').value;
+        const msg = new SpeechSynthesisUtterance(text);
+        msg.lang = ui[lang].langCode;
+        msg.rate = parseFloat(document.getElementById('speed-select').value);
+        window.speechSynthesis.speak(msg);
     }
 
     function triggerAdVoice() {
-        const l = document.getElementById('lang-select').value;
+        const lang = document.getElementById('lang-select').value;
         window.speechSynthesis.cancel();
-        const m = new SpeechSynthesisUtterance(_0xUiData[l].adWarn);
-        m.lang = _0xUiData[l].langCode;
-        window.speechSynthesis.speak(m);
+        const msg = new SpeechSynthesisUtterance(ui[lang].adWarn);
+        msg.lang = ui[lang].langCode;
+        window.speechSynthesis.speak(msg);
     }
 
-    function triggerAd(r) {
+    function triggerAd(reason) {
         isLocked = true;
-        localStorage.setItem(_0xStrings[5], 'true');
-        adStartTime = Date.now();
+        localStorage.setItem(_0xStorageKeys.lock, 'true');
+        // تخزين وقت البداية في الذاكرة الدائمة
+        localStorage.setItem(_0xStorageKeys.start, Date.now().toString());
         window.open(AD_URL, '_blank');
         triggerAdVoice();
     }
 
-    window.onfocus = function() {
-        if (isLocked && adStartTime > 0) {
-            if ((Date.now() - adStartTime) / 1000 >= 35) {
-                unlockApp();
-            } else {
-                triggerAdVoice();
+    // وظيفة فحص القفل: تستخدم عند الفتح (onload) وعند الرجوع (onfocus)
+    function checkLockStatus() {
+        if (isLocked) {
+            const savedTime = localStorage.getItem(_0xStorageKeys.start);
+            if (savedTime) {
+                const duration = (Date.now() - parseInt(savedTime)) / 1000;
+                if (duration >= 35) {
+                    unlockApp();
+                } else if (window.performance.navigation.type !== 1) { 
+                    // إذا كان التطبيق مغلقاً وفتحه المستخدم قبل انتهاء الوقت
+                    triggerAdVoice();
+                }
             }
         }
-    };
+    }
+
+    window.onfocus = checkLockStatus;
 
     function unlockApp() {
         isLocked = false;
-        speakCount = 0; trainCount = 0;
-        localStorage.setItem(_0xStrings[5], 'false');
-        localStorage.setItem(_0xStrings[7], '0');
-        localStorage.setItem(_0xStrings[8], '0');
+        localStorage.setItem(_0xStorageKeys.lock, 'false');
+        localStorage.setItem(_0xStorageKeys.start, '0');
+        localStorage.setItem(_0xStorageKeys.spk, '0');
+        localStorage.setItem(_0xStorageKeys.trn, '0');
         if (pendingLang) {
             document.getElementById('lang-select').value = pendingLang;
-            initLang(); pendingLang = null;
+            initLang();
+            pendingLang = null;
         }
     }
 
     function checkAdForLang() {
         pendingLang = document.getElementById('lang-select').value;
-        document.getElementById('lang-select').value = localStorage.getItem(_0xStrings[6]) || 'ar';
+        const currentLang = localStorage.getItem('lastLang') || 'ar';
+        document.getElementById('lang-select').value = currentLang;
         triggerAd('lang');
     }
 
     document.querySelectorAll('.dot').forEach(d => {
         d.addEventListener('touchstart', (e) => {
             e.preventDefault(); 
-            if(isLocked) return triggerAdVoice();
+            if(isLocked) { triggerAdVoice(); return; }
             fingers++; activePoints.add(d.dataset.id);
             d.classList.add('active'); speak(d.dataset.id);
             if(timer) clearTimeout(timer);
@@ -175,86 +185,93 @@
 
     function processBraille() {
         if(activePoints.size === 0) return;
-        const k = Array.from(activePoints).sort().join(',');
-        const l = document.getElementById('lang-select').value;
-        const c = _0xMaps[l][k] || "؟";
-        sentence += c;
+        const key = Array.from(activePoints).sort().join(',');
+        const lang = document.getElementById('lang-select').value;
+        const char = charMaps[lang][key] || "؟";
+        sentence += char;
         document.getElementById('output-text').innerText = sentence;
-        document.getElementById('v-braille').innerText = _0xSymbols[k] || "⠿";
-        document.getElementById('v-name').innerText = c;
-        speak(c);
+        document.getElementById('v-braille').innerText = brailleSymbols[key] || "⠿";
+        document.getElementById('v-name').innerText = char;
+        speak(char);
         activePoints.clear();
     }
 
     function addSpace() { 
-        if(isLocked) return triggerAdVoice();
-        const l = document.getElementById('lang-select').value;
-        sentence += " "; speak(_0xUiData[l].space); 
+        if(isLocked) { triggerAdVoice(); return; }
+        const lang = document.getElementById('lang-select').value;
+        sentence += " "; speak(ui[lang].space); 
         document.getElementById('output-text').innerText = sentence; 
     }
 
     function deleteChar() {
-        if(isLocked) return triggerAdVoice();
-        const l = document.getElementById('lang-select').value;
+        if(isLocked) { triggerAdVoice(); return; }
+        const lang = document.getElementById('lang-select').value;
         if(sentence.length > 0) {
-            let x = sentence.slice(-1); sentence = sentence.slice(0, -1);
+            let last = sentence.slice(-1); sentence = sentence.slice(0, -1);
             document.getElementById('output-text').innerText = sentence || "بصيرة";
-            speak(_0xUiData[l].del + " " + x);
+            speak(ui[lang].del + " " + last);
         }
     }
 
     function clearAll() { 
-        if(isLocked) return triggerAdVoice();
+        if(isLocked) { triggerAdVoice(); return; }
+        const lang = document.getElementById('lang-select').value;
         sentence = ""; document.getElementById('output-text').innerText = "بصيرة"; 
-        speak(_0xUiData[document.getElementById('lang-select').value].clear); 
+        speak(ui[lang].clear); 
     }
     
     function copyText() {
-        if(isLocked) return triggerAdVoice();
-        const l = document.getElementById('lang-select').value;
-        if(!sentence) return speak(_0xUiData[l].empty);
-        navigator.clipboard.writeText(sentence).then(() => speak(_0xUiData[l].copy));
+        if(isLocked) { triggerAdVoice(); return; }
+        const lang = document.getElementById('lang-select').value;
+        if(!sentence) { speak(ui[lang].empty); return; }
+        navigator.clipboard.writeText(sentence).then(() => speak(ui[lang].copy));
     }
 
     function speakFull() { 
-        if(isLocked) return triggerAdVoice();
-        speakCount++;
-        localStorage.setItem(_0xStrings[7], speakCount);
-        if (speakCount >= 30) return triggerAd('speak');
-        speak(sentence || _0xUiData[document.getElementById('lang-select').value].empty); 
+        if(isLocked) { triggerAdVoice(); return; }
+        let count = parseInt(localStorage.getItem(_0xStorageKeys.spk)) || 0;
+        count++;
+        localStorage.setItem(_0xStorageKeys.spk, count);
+        if (count >= 30) { triggerAd('speak'); return; }
+        speak(sentence || ui[document.getElementById('lang-select').value].empty); 
     }
     
     function toggleStealth() {
-        if(isLocked) return triggerAdVoice();
-        const l = document.getElementById('lang-select').value;
-        const s = document.body.classList.toggle('stealth-mode');
-        speak(s ? _0xUiData[l].stealth : _0xUiData[l].normal);
+        if(isLocked) { triggerAdVoice(); return; }
+        const lang = document.getElementById('lang-select').value;
+        const isOn = document.body.classList.toggle('stealth-mode');
+        speak(isOn ? ui[lang].stealth : ui[lang].normal);
     }
 
     function startTraining() {
-        if(isLocked) return triggerAdVoice();
-        trainCount++;
-        localStorage.setItem(_0xStrings[8], trainCount);
-        if (trainCount >= 5) return triggerAd('train');
-        const l = document.getElementById('lang-select').value;
-        const v = Object.values(_0xMaps[l]);
-        const t = v[Math.floor(Math.random() * v.length)];
-        speak(_0xUiData[l].train + t);
+        if(isLocked) { triggerAdVoice(); return; }
+        let count = parseInt(localStorage.getItem(_0xStorageKeys.trn)) || 0;
+        count++;
+        localStorage.setItem(_0xStorageKeys.trn, count);
+        if (count >= 5) { triggerAd('train'); return; }
+        const lang = document.getElementById('lang-select').value;
+        const chars = Object.values(charMaps[lang]);
+        const target = chars[Math.floor(Math.random() * chars.length)];
+        speak(ui[lang].train + target);
     }
 
     function initLang() {
-        const l = document.getElementById('lang-select').value;
-        localStorage.setItem(_0xStrings[6], l);
+        const lang = document.getElementById('lang-select').value;
+        localStorage.setItem('lastLang', lang);
         const labels = {
             ar: ["مسافة", "حذف", "مسح", "نسخ", "نطق", "تدريب", "وضع التخفي 🕶️"],
             en: ["Space", "Delete", "Clear", "Copy", "Speak", "Train", "Stealth 🕶️"],
             fr: ["Espace", "Effacer", "Vider", "Copier", "Lire", "Entraîner", "Furtif 🕶️"],
             it: ["Spazio", "Elimina", "Pulisci", "Copia", "Parla", "Allenare", "Invisibile 🕶️"]
         };
-        document.querySelectorAll('.btn').forEach((b, i) => b.innerText = labels[l][i]);
-        speak(_0xUiData[l].name);
+        document.querySelectorAll('.btn').forEach((btn, i) => btn.innerText = labels[lang][i]);
+        speak(ui[lang].name);
     }
-    window.onload = initLang;
+
+    window.onload = function() {
+        initLang();
+        checkLockStatus(); // فحص القفل فور تشغيل التطبيق
+    };
 </script>
 </body>
 </html>
