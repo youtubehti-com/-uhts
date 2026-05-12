@@ -31,13 +31,13 @@
 
 <div class="os-wrapper">
     <div class="top-nav">
-        <select id="lang-select" onchange="handleLangChange()">
+        <select id="lang-select" onchange="checkAdForLang()">
             <option value="ar">العربية (AR)</option>
             <option value="en">English (EN)</option>
             <option value="fr">Français (FR)</option>
             <option value="it">Italiano (IT)</option>
         </select>
-        <select id="speed-select" onchange="handleSpeedChange()">
+        <select id="speed-select" onchange="triggerAd('speed')">
             <option value="0.8">بطيء</option>
             <option value="1" selected>طبيعي</option>
             <option value="1.2">سريع</option>
@@ -60,28 +60,22 @@
 
     <div class="controls">
         <div class="btn" id="btn-space" onclick="addSpace()">مسافة</div>
-        <div class="btn" id="btn-del" onclick="deleteChar()" style="color:#ff5555">حذف</div>
-        <div class="btn" id="btn-clear" onclick="clearAll()" style="color:#ff5555">مسح</div>
-        <div class="btn" id="btn-copy" onclick="copyText()" style="color:var(--cyan)">نسخ</div>
-        <div class="btn" id="btn-speak" onclick="handleSpeakBtn()" style="color:var(--cyan)">نطق</div>
-        <div class="btn" id="btn-train" onclick="handleTrainBtn()" style="color:#fbff00">تدريب</div>
+        <div class="btn" id="btn-del" onclick="deleteChar()">حذف</div>
+        <div class="btn" id="btn-clear" onclick="clearAll()">مسح</div>
+        <div class="btn" id="btn-copy" onclick="copyText()">نسخ</div>
+        <div class="btn" id="btn-speak" onclick="speakFull()">نطق</div>
+        <div class="btn" id="btn-train" onclick="startTraining()">تدريب</div>
         <div class="btn" id="btn-stealth" onclick="toggleStealth()" style="grid-column: span 3;">وضع التخفي 🕶️</div>
     </div>
 </div>
 
 <script>
-    // الإعلانات والروابط
     const AD_URL = "https://linkjust.com/Applicationsandlanguages";
-    
-    // استعادة العدادات من الذاكرة أو البدء من الصفر
-    let speakCounter = parseInt(localStorage.getItem('speakCounter')) || 0;
-    let trainCounter = parseInt(localStorage.getItem('trainCounter')) || 0;
-
     const ui = {
-        ar: { name: "اللغة العربية", space:"مسافة", del:"حذف", clear:"مسح الكل", copy:"تم النسخ", empty:"النص فارغ", stealth:"تفعيل التخفي", normal:"الوضع العادي", train:"اكتب حرف: ", langCode: 'ar-SA', adMsg: "يجب مشاهدة الإعلان لفتح الميزات" },
-        en: { name: "English Language", space:"Space", del:"Delete", clear:"Cleared", copy:"Copied", empty:"Empty", stealth:"Stealth On", normal:"Stealth Off", train:"Type letter: ", langCode: 'en-US', adMsg: "You must watch the ad to unlock features" },
-        fr: { name: "Langue Française", space:"Espace", del:"Effacer", clear:"Vidé", copy:"Copié", empty:"Vide", stealth:"Furtif", normal:"Normal", train:"Tapez: ", langCode: 'fr-FR', adMsg: "Regardez la pub pour débloquer" },
-        it: { name: "Lingua Italiana", space:"Spazio", del:"Elimina", clear:"Pulito", copy:"Copiato", empty:"Vuoto", stealth:"Invisibile", normal:"Normale", train:"Scrivi: ", langCode: 'it-IT', adMsg: "Guarda l'annuncio per sbloccare" }
+        ar: { name: "اللغة العربية", space:"مسافة", del:"حذف", clear:"مسح الكل", copy:"تم النسخ", empty:"النص فارغ", stealth:"تفعيل التخفي", normal:"الوضع العادي", train:"اكتب حرف: ", langCode: 'ar-SA', adWarn: "يجب مشاهدة الإعلان لفتح الميزات" },
+        en: { name: "English Language", space:"Space", del:"Delete", clear:"Cleared", copy:"Copied", empty:"Empty", stealth:"Stealth On", normal:"Stealth Off", train:"Type letter: ", langCode: 'en-US', adWarn: "You must watch the ad to unlock features" },
+        fr: { name: "Langue Française", space:"Espace", del:"Effacer", clear:"Vidé", copy:"Copié", empty:"Vide", stealth:"Furtif", normal:"Normal", train:"Tapez: ", langCode: 'fr-FR', adWarn: "Vous devez regarder la publicité" },
+        it: { name: "Lingua Italiana", space:"Spazio", del:"Elimina", clear:"Pulito", copy:"Copiato", empty:"Vuoto", stealth:"Invisibile", normal:"Normale", train:"Scrivi: ", langCode: 'it-IT', adWarn: "Devi guardare l'annuncio" }
     };
 
     const charMaps = {
@@ -93,65 +87,91 @@
 
     const brailleSymbols = { "1":"⠁","1,2":"⠃","1,2,3":"⠇","1,2,3,4":"⠏","1,2,3,4,5":"⠟","1,2,3,5":"⠗","1,2,4":"⠋","1,2,4,5":"⠛","1,2,5":"⠓","1,2,5,6":"⠳","1,2,6":"⠣","1,3":"⠅","1,3,4":"⠍","1,3,4,5":"⠝","1,3,4,5,6":"⠽","1,3,4,6":"⠭","1,3,5":"⠕","1,3,5,6":"⠵","1,3,6":"⠥","1,4":"⠉","1,4,5":"⠙","1,4,5,6":"⠹","1,4,6":"⠩","1,5":"⠑","1,5,6":"⠱","1,6":"⠡","2":"⠂","2,3":"⠆","2,3,4":"⠎","2,3,4,5":"⠞","2,3,4,5,6":"⠾","2,3,4,6":"⠮","2,3,5":"⠪","2,3,5,6":"⠲","2,3,6":"⠦","2,4":"⠊","2,4,5":"⠚","2,4,5,6":"⠺","2,4,6":"⠌","2,5":"⠒","2,5,6":"⠖","3":"⠄","3,4,5":"⠜","3,4,5,6":"⠼","3,4,6":"⠴","3,6":"⠤","4,6":"⠨","6":"⠠" };
 
+    // متغيرات الحالة
     let activePoints = new Set(), sentence = "", fingers = 0, timer = null;
-
-    function openAd() { window.open(AD_URL, '_blank'); }
+    let speakCount = parseInt(localStorage.getItem('speakCount')) || 0;
+    let trainCount = parseInt(localStorage.getItem('trainCount')) || 0;
+    let isLocked = localStorage.getItem('isLocked') === 'true';
+    let adStartTime = 0;
+    let pendingLang = null;
 
     function speak(text) {
+        if (isLocked) {
+            const lang = document.getElementById('lang-select').value;
+            triggerAdVoice();
+            return;
+        }
         if (!window.speechSynthesis) return;
         window.speechSynthesis.cancel();
-        const synth = window.speechSynthesis;
         const lang = document.getElementById('lang-select').value;
         const msg = new SpeechSynthesisUtterance(text);
         msg.lang = ui[lang].langCode;
         msg.rate = parseFloat(document.getElementById('speed-select').value);
-        synth.speak(msg);
+        window.speechSynthesis.speak(msg);
     }
 
-    // منطق اللغة: لا تتغير إلا بفتح إعلان
-    function handleLangChange() {
-        openAd();
-        initLang();
+    function triggerAdVoice() {
+        const lang = document.getElementById('lang-select').value;
+        window.speechSynthesis.cancel();
+        const msg = new SpeechSynthesisUtterance(ui[lang].adWarn);
+        msg.lang = ui[lang].langCode;
+        window.speechSynthesis.speak(msg);
     }
 
-    // منطق السرعة: تفتح إعلان فوراً
-    function handleSpeedChange() {
-        openAd();
+    // إدارة الإعلانات
+    function triggerAd(reason) {
+        isLocked = true;
+        localStorage.setItem('isLocked', 'true');
+        adStartTime = Date.now();
+        window.open(AD_URL, '_blank');
+        triggerAdVoice();
     }
 
-    // منطق النطق: بعد 30 نطق
-    function handleSpeakBtn() {
-        if (speakCounter >= 30) {
-            const lang = document.getElementById('lang-select').value;
-            speak(ui[lang].adMsg);
-            openAd();
-            speakCounter = 0; // تصفير العداد بعد فتح الرابط
-            localStorage.setItem('speakCounter', 0);
-        } else {
-            speakCounter++;
-            localStorage.setItem('speakCounter', speakCounter);
-            speakFull();
+    // فحص الإعلان عند العودة للتطبيق
+    window.onfocus = function() {
+        if (isLocked && adStartTime > 0) {
+            const duration = (Date.now() - adStartTime) / 1000;
+            if (duration >= 35) {
+                unlockApp();
+            } else {
+                triggerAdVoice();
+            }
+        }
+    };
+
+    function unlockApp() {
+        isLocked = false;
+        speakCount = 0;
+        trainCount = 0;
+        localStorage.setItem('isLocked', 'false');
+        localStorage.setItem('speakCount', '0');
+        localStorage.setItem('trainCount', '0');
+        if (pendingLang) {
+            document.getElementById('lang-select').value = pendingLang;
+            initLang();
+            pendingLang = null;
         }
     }
 
-    // منطق التدريب: بعد 5 مرات
-    function handleTrainBtn() {
-        trainCounter++;
-        localStorage.setItem('trainCounter', trainCounter);
-        if (trainCounter % 5 === 0) {
-            openAd();
-        }
-        startTraining();
+    function checkAdForLang() {
+        pendingLang = document.getElementById('lang-select').value;
+        // العودة للغة القديمة مؤقتاً حتى يتم فتح القفل
+        const currentLang = localStorage.getItem('lastLang') || 'ar';
+        document.getElementById('lang-select').value = currentLang;
+        triggerAd('lang');
     }
 
     document.querySelectorAll('.dot').forEach(d => {
         d.addEventListener('touchstart', (e) => {
-            e.preventDefault(); fingers++; activePoints.add(d.dataset.id);
+            e.preventDefault(); 
+            if(isLocked) { triggerAdVoice(); return; }
+            fingers++; activePoints.add(d.dataset.id);
             d.classList.add('active'); speak(d.dataset.id);
             if(timer) clearTimeout(timer);
         });
         d.addEventListener('touchend', (e) => {
-            e.preventDefault(); fingers--; d.classList.remove('active');
+            e.preventDefault(); if(isLocked) return;
+            fingers--; d.classList.remove('active');
             if(fingers === 0) timer = setTimeout(processBraille, 450);
         });
     });
@@ -170,12 +190,14 @@
     }
 
     function addSpace() { 
+        if(isLocked) { triggerAdVoice(); return; }
         const lang = document.getElementById('lang-select').value;
         sentence += " "; speak(ui[lang].space); 
         document.getElementById('output-text').innerText = sentence; 
     }
 
     function deleteChar() {
+        if(isLocked) { triggerAdVoice(); return; }
         const lang = document.getElementById('lang-select').value;
         if(sentence.length > 0) {
             let last = sentence.slice(-1); sentence = sentence.slice(0, -1);
@@ -185,28 +207,45 @@
     }
 
     function clearAll() { 
+        if(isLocked) { triggerAdVoice(); return; }
         const lang = document.getElementById('lang-select').value;
         sentence = ""; document.getElementById('output-text').innerText = "بصيرة"; 
         speak(ui[lang].clear); 
     }
     
     function copyText() {
+        if(isLocked) { triggerAdVoice(); return; }
         const lang = document.getElementById('lang-select').value;
         if(!sentence) { speak(ui[lang].empty); return; }
-        navigator.clipboard.writeText(sentence).then(() => {
-            speak(ui[lang].copy);
-        });
+        navigator.clipboard.writeText(sentence).then(() => speak(ui[lang].copy));
     }
 
-    function speakFull() { speak(sentence || ui[document.getElementById('lang-select').value].empty); }
+    function speakFull() { 
+        if(isLocked) { triggerAdVoice(); return; }
+        speakCount++;
+        localStorage.setItem('speakCount', speakCount);
+        if (speakCount >= 30) {
+            triggerAd('speak');
+            return;
+        }
+        speak(sentence || ui[document.getElementById('lang-select').value].empty); 
+    }
     
     function toggleStealth() {
+        if(isLocked) { triggerAdVoice(); return; }
         const lang = document.getElementById('lang-select').value;
         const isOn = document.body.classList.toggle('stealth-mode');
         speak(isOn ? ui[lang].stealth : ui[lang].normal);
     }
 
     function startTraining() {
+        if(isLocked) { triggerAdVoice(); return; }
+        trainCount++;
+        localStorage.setItem('trainCount', trainCount);
+        if (trainCount >= 5) {
+            triggerAd('train');
+            return;
+        }
         const lang = document.getElementById('lang-select').value;
         const chars = Object.values(charMaps[lang]);
         const target = chars[Math.floor(Math.random() * chars.length)];
@@ -215,6 +254,7 @@
 
     function initLang() {
         const lang = document.getElementById('lang-select').value;
+        localStorage.setItem('lastLang', lang);
         const labels = {
             ar: ["مسافة", "حذف", "مسح", "نسخ", "نطق", "تدريب", "وضع التخفي 🕶️"],
             en: ["Space", "Delete", "Clear", "Copy", "Speak", "Train", "Stealth 🕶️"],
@@ -224,15 +264,7 @@
         document.querySelectorAll('.btn').forEach((btn, i) => btn.innerText = labels[lang][i]);
         speak(ui[lang].name);
     }
-
-    window.onload = () => {
-        initLang();
-        // رسالة تنبيه صوتية عند التشغيل
-        setTimeout(() => {
-            const lang = document.getElementById('lang-select').value;
-            speak(ui[lang].adMsg);
-        }, 1000);
-    };
+    window.onload = initLang;
 </script>
 </body>
 </html>
